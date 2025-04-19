@@ -19,11 +19,28 @@ model User{
   profile String
   username String @unique 
   password String 
+  email String
   createdAt DateTime @default(now())
+  server Server[]
+  memberof Server[] @relation("serverMembers")
 }
 
 model Server{
   id Int @id @default(autoincrement())
   name String
-  
+  createdAt  DateTime   @default(now())
+  upvote Int
+  user  User @relation(fields: [adminid], references: [id])
+  adminid Int
+  channels Channel[]
+  members User[] @relation("serverMembers")
+}
+
+model Channel{
+  id Int @id @default(autoincrement())
+  name String
+  createdAt  DateTime   @default(now())
+  server Server @relation(fields: [serverid],references: [id])
+  serverid Int
+  category String @default("default")
 }
