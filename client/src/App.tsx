@@ -31,8 +31,8 @@ export default function AppRoutes() {
     <div className="h-screen w-screen flex flex-row-reverse">
       <Routes>
         <Route element={<Layout />}>
-          <Route path="/server" element={<Home />} />
-          <Route path="/server/room/:roomid" element={<SidebarLayout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/room/:roomid" element={<SidebarLayout />}>
             <Route index element={<Room />} />
             <Route path=":channel" element={<ChannelCtx />} />
           </Route>

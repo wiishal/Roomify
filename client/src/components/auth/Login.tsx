@@ -51,8 +51,7 @@ export default function Login({
               }
               localStorage.setItem("token", res.token);
               setIsLogged(true);
-
-              navigate("/server");
+              navigate("/");
             } catch (error) {
               console.error("login error : ", error);
               alert("An unexpected error occurred");

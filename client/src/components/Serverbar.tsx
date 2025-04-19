@@ -22,7 +22,7 @@ export default function Serverbar() {
       {server.length > 0 ? (
         <div className="flex-1  overflow-auto flex flex-col gap-2 my-2 ">
           {server.map((s: Server) => (
-            <Link key={s.roomid} to={`/server/room/${s.roomid}/`}>
+            <Link key={s.roomid} to={`/room/${s.roomid}/`}>
               <div
                 className={`flex justify-center rounded-md items-center border py-1 shadow-lg`}
               >

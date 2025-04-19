@@ -17,16 +17,16 @@ export default function Channelbar({
     server?.channel.forEach((c) => {
       if (!sorted[c.category]) {
         sorted[c.category] = [];
-      } 
+      }
       sorted[c.category].push(c);
     });
     console.log("sorted arrau", sorted);
     setSorted(sorted);
     console.log(Object.entries(sorted));
-  } 
+  }
   return (
     <div className="w-full h-full shadow-md p-2 font-mono">
-      <Link to={`/server/room/${server?.roomid}/`}>
+      <Link to={`/room/${server?.roomid}/`}>
         <div className="border font-semibold p-2">{server?.name}</div>
       </Link>
       {}
@@ -42,7 +42,7 @@ export default function Channelbar({
                   key={c.channelid}
                   className="font-medium text-lg px-2 py-1"
                 >
-                  <Link to={`/server/room/${server.roomid}/${c.channelid}`}>
+                  <Link to={`/room/${server.roomid}/${c.channelid}`}>
                     #{c.name}
                   </Link>
                 </div>
