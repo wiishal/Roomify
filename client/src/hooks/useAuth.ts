@@ -13,15 +13,14 @@ export function useAuth() {
       }
       try {
         const res = await verifyToken(token);
-        if (!res) {
+        if (!res.success) {
           setIsLogged(false);
           return;
         }
-        console.log(res);
         setIsLogged(true);
         return;
       } catch (error) {
-        alert("error while verify"); 
+        alert("error while verify");
         console.log("verify error : ", error);
         setIsLogged(false);
       }
