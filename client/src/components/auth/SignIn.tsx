@@ -1,10 +1,9 @@
 import { Dispatch, JSX, SetStateAction, useState } from "react";
-import { login } from "../../services/services.user";
 import { useNavigate } from "react-router-dom";
 import Button from "../ui/Button";
-import Input from "../ui/Input";
+import { signIn } from "../../services/services.user";
 
-export default function Login({
+export default function SignIn({
   setIsLogged,
   onClose,
   onAlreadyHasAcc,
@@ -16,15 +15,17 @@ export default function Login({
   const [userdetails, setuserdetails] = useState({
     username: "",
     password: "",
+    email: "",
   });
   const [isloading, setIsLoading] = useState<boolean | null>(null);
   const navigate = useNavigate();
+
   return (
     <div className="flex flex-col justify-center bg-neutral-800 items-center text-white gap-5 w-[30rem] h-[25rem]">
       <div className="flex flex-col border p-6 gap-5 w-full h-full">
         <div className="flex flex-col gap-2">
           <label htmlFor="">Username</label>
-          <Input
+          <input
             className="bg-transparent border p-2"
             type="text"
             onChange={(e) => {
@@ -33,8 +34,19 @@ export default function Login({
           />
         </div>
         <div className="flex flex-col gap-2">
+          <label htmlFor="">email</label>
+          <input
+            required
+            className="bg-transparent border p-2"
+            type="email"
+            onChange={(e) => {
+              setuserdetails((prev) => ({ ...prev, email: e.target.value }));
+            }}
+          />
+        </div>
+        <div className="flex flex-col gap-2">
           <label htmlFor="">Password</label>
-          <Input
+          <input
             className="bg-transparent border p-2"
             type="password"
             onChange={(e) => {
@@ -48,7 +60,7 @@ export default function Login({
             onClick={async () => {
               setIsLoading(true);
               try {
-                const res = await login(userdetails);
+                const res = await signIn(userdetails);
                 if (!res) {
                   alert("failed during login");
                   return;
@@ -74,7 +86,7 @@ export default function Login({
               }
             }}
           >
-            {isloading ? "Loading" : "login"}
+            {isloading ? "Loading" : "sign in"}
           </Button>
           <Button
             onClick={onClose}
@@ -83,7 +95,7 @@ export default function Login({
             Close
           </Button>
           <Button onClick={onAlreadyHasAcc} className="font-normal text-sm">
-            Do no have an account
+            Already have an account
           </Button>
         </div>
       </div>

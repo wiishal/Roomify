@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import Serverbar from "../Serverbar";
+import Serverbar from "../bars/Serverbar";
 
 export default function Layout() {
   return (

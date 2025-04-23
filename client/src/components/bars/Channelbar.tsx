@@ -1,14 +1,15 @@
 import { JSX, useEffect, useState } from "react";
-import { Channel, Server } from "../type/type";
 import { Link } from "react-router-dom";
+import { Channel, Server } from "../../type/type";
+
 type Sorted = { [category: string]: Channel[] };
+
 export default function Channelbar({
   server,
 }: {
   server: Server | null;
 }): JSX.Element {
   const [sorted, setSorted] = useState<Sorted>({});
-  console.log(server);
   useEffect(() => {
     sort();
   }, [server]);
@@ -20,7 +21,7 @@ export default function Channelbar({
       }
       sorted[c.category].push(c);
     });
-    console.log("sorted arrau", sorted);
+    console.log("sorted array", sorted);
     setSorted(sorted);
     console.log(Object.entries(sorted));
   }
