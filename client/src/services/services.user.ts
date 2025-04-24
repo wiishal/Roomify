@@ -1,11 +1,12 @@
 import axios from "axios";
-import { BaseResponce, loginResponce } from "../type/Response.type";
+import { BaseResponse, loginResponse } from "../type/Response.type";
 
 const url = import.meta.env.VITE_API_URL;
+
 export async function login(userdetails: {
   username: string;
   password: string;
-}): Promise<loginResponce> {
+}): Promise<loginResponse> {
   try {
     const res = await axios.post(`${url}/api/v1/auth/login`, {
       userdetails,
@@ -19,7 +20,7 @@ export async function login(userdetails: {
     if (axios.isAxiosError(error) && error.response) {
       return {
         status: error.response.status,
-        message: error.response.data.message || "Token verification failed",
+        message: error.response.data.message || "Failed to log in",
         success: false,
       };
     }
@@ -33,7 +34,39 @@ export async function login(userdetails: {
   }
 }
 
-export async function verifyToken(token: string): Promise<BaseResponce> {
+export async function signIn(userdetails: {
+  username: string;
+  password: string;
+  email: string;
+}): Promise<loginResponse> {
+  try {
+    const res = await axios.post(`${url}/api/v1/auth/signin`, {
+      userdetails,
+    });
+
+    return {
+      ...res.data,
+      success: true,
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      return {
+        status: error.response.status,
+        message: error.response.data.message || "failed during sign in",
+        success: false,
+      };
+    }
+    console.error("error while sign ", error);
+
+    return {
+      status: 500,
+      message: "Network or server error occurred",
+      success: false,
+    };
+  }
+}
+
+export async function verifyToken(token: string): Promise<BaseResponse> {
   if (!token) {
     console.error("Token Not present!!");
 

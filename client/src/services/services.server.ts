@@ -1,19 +1,19 @@
 import axios, { isAxiosError } from "axios";
-import { BaseResponce } from "../type/Response.type";
+import { BaseResponse } from "../type/Response.type";
 import { Server } from "../type/type";
 const url = import.meta.env.VITE_API_URL;
 
-interface fetchServerInfoResponce extends BaseResponce {
+interface fetchServerInfoResponce extends BaseResponse {
   server?: Server;
 }
-interface getServersResponce extends BaseResponce {
+interface getServersResponse extends BaseResponse {
   servers?: Server[];
 }
-interface createServerResponse extends BaseResponce {
+interface createServerResponse extends BaseResponse {
   server?: Server;
 }
 
-export async function getServers(): Promise<getServersResponce> {
+export async function getServers(): Promise<getServersResponse> {
   try {
     const res = await axios.get(`${url}/api/v1/server`);
     return {
