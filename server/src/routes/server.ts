@@ -26,7 +26,7 @@ const ServerRouter = express.Router();
 ServerRouter.get("/", (req, res) => {
   const s = server.map((s) => ({ roomid: s.roomid, name: s.name }));
   console.log(s);
-  res.json({ server: s });
+  res.json({ servers: s ,message:"servers fetched successfully"});
 });
 
 ServerRouter.get("/serverinfo/:id", (req, res) => {
@@ -47,6 +47,6 @@ ServerRouter.get("/serverinfo/:id", (req, res) => {
 ServerRouter.post("/create", (req, res) => {
   const { server } = req.body;
   console.log(server);
-  res.json({ message: "server is created" });
+  res.json({ server: server, message: "server is created" });
 });
 export default ServerRouter;

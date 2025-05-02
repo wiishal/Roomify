@@ -1,27 +1,46 @@
 import express from "express";
-import { signToken } from "../service/service.user.js";
+import {
+  CheckCreadential,
+  SignInUser,
+  signToken,
+} from "../service/service.auth";
 
 const users = [{ username: "v", password: "1" }];
 
 const AuthRouter = express.Router();
 
-AuthRouter.post("/login", async (req, res) => {
+//signin
+
+AuthRouter.post("/signin", async (req, res) => {
   const { userdetails } = req.body;
 
-  const user = users.find(
-    (u) =>
-      u.username === userdetails.username && u.password === userdetails.password
-  );
+  const isCredentialExisted = await CheckCreadential(userdetails);
 
-  if (user) {
-    const token = await signToken({ username: user.username, userid: 1 });
-    if (!token) {
-      res.status(401).json({ message: "server error" });
-    }
-    res.status(200).json({ message: "Login successful", token });
-  } else {
-    res.status(401).json({ message: "Invalid username or password" });
+  if (!isCredentialExisted.success) {
+    res.status(404).json({ message: isCredentialExisted.message });
+    return;
   }
+  if (isCredentialExisted.isEmailExisted) {
+    res.status(404).json({ message: "email is already exist" });
+    return;
+  }
+  if (!isCredentialExisted.isUsernameExisted) {
+    res.status(404).json({ message: "username is already exist" });
+    return;
+  }
+
+  const createdUser = await SignInUser(userdetails);
+
+  if (!createdUser.success) {
+    res.status(401).json({ message: createdUser.message });
+    return;
+  }
+  res.status(200).json({ message: createdUser.message });
+});
+
+//login
+AuthRouter.post("/login", async (req, res) => {
+  const { userdetails } = req.body;
 });
 
 AuthRouter.post("/verify", (req, res) => {
@@ -36,4 +55,5 @@ AuthRouter.post("/verify", (req, res) => {
   }
   res.status(200).json({ message: "verify" });
 });
+
 export default AuthRouter;
