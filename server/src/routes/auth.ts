@@ -9,14 +9,13 @@ import {
 const AuthRouter = express.Router();
 
 //signin
-
 AuthRouter.post("/signin", async (req, res) => {
   const { userdetails } = req.body;
   console.log("sign : ", userdetails);
   const isCredentialExisted = await CheckCreadential(userdetails);
 
   if (!isCredentialExisted.success) {
-    res.status(404).json({ message: isCredentialExisted.message });
+    res.status(404).json({ message: isCredentialExisted.error });
     return;
   }
   if (isCredentialExisted.isUserExist && isCredentialExisted.isEmailExisted) {
@@ -34,10 +33,25 @@ AuthRouter.post("/signin", async (req, res) => {
   const createdUser = await SignInUser(userdetails);
 
   if (!createdUser.success) {
-    res.status(401).json({ message: createdUser.message });
+    res.status(401).json({ message: createdUser.error });
     return;
   }
-  res.status(200).json({ message: createdUser.message });
+
+  if (!createdUser.user) {
+
+    return;
+  }
+  const currentToken = await signToken({
+    username: createdUser.user?.username,
+    id: createdUser.user?.id,
+  });
+
+  if (!currentToken) {
+    res.status(404).json({ messgae: "failed during generating token" });
+    return;
+  }
+
+  res.status(200).json({ message: createdUser.message, token: currentToken });
 });
 
 //login
@@ -51,7 +65,7 @@ AuthRouter.post("/login", async (req, res) => {
   console.log("login : ", userdetails);
   const loguser = await LoginInUser(userdetails);
   if (!loguser.success) {
-    res.status(401).json({ message: loguser.message });
+    res.status(401).json({ message: loguser.error });
     return;
   }
   if (!loguser.user) {

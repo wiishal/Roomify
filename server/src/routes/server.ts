@@ -1,31 +1,13 @@
 import express from "express";
 import { tokenVerification } from "../middleware/tokenVerification";
 import {
+  CreateChannel,
   CreateDefaultChannels,
   CreateServer,
+  GetChannels,
+  GetServerInfo,
   GetServers,
 } from "../service/service.server";
-const server = [
-  {
-    roomid: "1",
-    name: "cipher",
-    upvote: 1231,
-    channel: [
-      { channelid: 1, name: "rule", category: "default" },
-      { channelid: 2, name: "join", category: "default" },
-      { channelid: 3, name: "general", category: "general" },
-    ],
-  },
-  {
-    roomid: "2",
-    name: "contra",
-    upvote: 231,
-    channel: [
-      { channelid: 1, name: "rule", category: "default" },
-      { channelid: 2, name: "join", category: "default" },
-    ],
-  },
-];
 
 const ServerRouter = express.Router();
 ServerRouter.use(tokenVerification);
@@ -33,9 +15,8 @@ ServerRouter.use(tokenVerification);
 ServerRouter.get("/", async (req, res) => {
   const user = req.user;
   const servers = await GetServers();
-  console.log(servers);
   if (!servers.success) {
-    res.status(404).json({ message: servers.message });
+    res.status(404).json({ message: servers.error });
     return;
   }
   res.json({
@@ -45,17 +26,26 @@ ServerRouter.get("/", async (req, res) => {
   });
 });
 
-ServerRouter.get("/serverinfo/:id", (req, res) => {
-  const params = req.params as { id: string };
-  console.log(params);
-  const currentServer = server.find((room) => room.roomid === params.id);
+ServerRouter.get("/channels/:id", async (req, res) => {
+  const id: number = Number(req.params.id);
+  if (isNaN(id)) {
+    res.status(400).json({ message: "Invalid ID" });
+    return;
+  }
+  const currentServer = await GetChannels(id);
+  const serverInfo = await GetServerInfo(id);
 
-  if (!currentServer) {
-    res.status(401).json({ message: "room not exist" });
+  if (!currentServer.success) {
+    res.status(401).json({ message: currentServer.error });
+    return;
+  }
+  if (!serverInfo.success) {
+    res.status(401).json({ message: serverInfo.error });
     return;
   }
   res.status(200).json({
-    server: currentServer,
+    channels: currentServer.channels,
+    serverInfo: serverInfo.server,
     message: "channel fetch successfully",
   });
 });
@@ -73,7 +63,6 @@ ServerRouter.post("/create", async (req, res) => {
     console.log("error : user decode missing ");
     return;
   }
-  console.log(user);
   const createdServer = await CreateServer({
     serverName: server.name,
     userid: user.id,
@@ -81,7 +70,7 @@ ServerRouter.post("/create", async (req, res) => {
   });
 
   if (!createdServer.success) {
-    res.status(401).json({ message: createdServer.message });
+    res.status(401).json({ message: createdServer.error });
     return;
   }
   if (!createdServer.server) {
@@ -89,9 +78,25 @@ ServerRouter.post("/create", async (req, res) => {
   }
   const createchannels = await CreateDefaultChannels(createdServer.server?.id);
   if (!createchannels.success) {
-    res.status(403).json({ message: createchannels.message });
+    res.status(403).json({ message: createchannels.error });
     return;
   }
   res.status(200).json({ message: "server Created Successfully" });
+});
+
+ServerRouter.post("/createChannel", async (req, res) => {
+  if (!req.body) {
+    res.status(400).json({ message: "Invalide request" });
+    return;
+  }
+
+  const { channelInfo } = req.body;
+
+  const createdChannel = await CreateChannel(channelInfo);
+  if (!createdChannel.success) {
+    res.status(404).json({ message: createdChannel.error });
+    return;
+  }
+  res.status(200).json({ channel: createdChannel.channel });
 });
 export default ServerRouter;
