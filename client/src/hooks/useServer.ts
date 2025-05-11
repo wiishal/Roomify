@@ -6,28 +6,30 @@ export default function useServer() {
   const [server, setServer] = useState<Server[] | []>([]);
   const [isLoading, setLoading] = useState(true);
   useEffect(() => {
-    async function get() {
-      try {
-        const res = await getServers();
-        if (!res.success) {
-          alert(res.message || "failed during fetching server");
-          return;
-        }
-
-        if (!res.servers) {
-          alert(res.message || "server not found");
-          return;
-        }
-        setServer(res.servers);
-      } catch (error) {
-        setLoading(false);
-        alert("expected error accured");
-      } finally {
-        setLoading(false);
-      }
-    }
-    get();
+    fetchServers();
   }, []);
 
-  return { server, isLoading };
+  async function fetchServers() {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await getServers(token || "");
+      if (!res.success) {
+        alert(res.message || "failed during fetching server");
+        return;
+      }
+
+      if (!res.servers) {
+        alert(res.message || "server not found");
+        return;
+      }
+      setServer(res.servers);
+    } catch (error) {
+      setLoading(false);
+      alert("expected error accured");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return { server, isLoading, refetch: fetchServers };
 }
