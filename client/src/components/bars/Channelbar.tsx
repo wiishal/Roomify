@@ -1,55 +1,44 @@
-import { JSX, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { Channel, Server } from "../../type/type";
+import { JSX, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import CreateCategory from "../CreateCategory";
+import RenderChannels from "../RenderChannels";
+import { useUser } from "../../hooks/useUser";
+import { useChannel } from "../../hooks/usechannel";
 
-type Sorted = { [category: string]: Channel[] };
+export default function Channelbar(): JSX.Element {
+  const user = useUser();
+  const params = useParams();
+  const { channels, serverInfo, setChannels } = useChannel(params.roomid);
+  const [isCreateCategoryOpen, setIsCreateCategoryOpen] = useState<boolean>(false);
 
-export default function Channelbar({
-  server,
-}: {
-  server: Server | null;
-}): JSX.Element {
-  const [sorted, setSorted] = useState<Sorted>({});
-  useEffect(() => {
-    sort();
-  }, [server]);
-  function sort() {
-    let sorted: Sorted = {};
-    server?.channel.forEach((c) => {
-      if (!sorted[c.category]) {
-        sorted[c.category] = [];
-      }
-      sorted[c.category].push(c);
-    });
-    console.log("sorted array", sorted);
-    setSorted(sorted);
-    console.log(Object.entries(sorted));
-  }
   return (
     <div className="w-full h-full shadow-md p-2 font-mono">
-      <Link to={`/room/${server?.roomid}/`}>
-        <div className="border font-semibold p-2">{server?.name}</div>
-      </Link>
-      {}
-      {server && server.channel.length > 0 ? (
+      {isCreateCategoryOpen && (
+        <div className="fixed inset-0 z-10 bg-black bg-opacity-50 flex justify-center items-center">
+          <CreateCategory
+            Close={() => setIsCreateCategoryOpen(false)}
+            setChannels={setChannels}
+          />
+        </div>
+      )}
+
+      <div className="flex justify-between border font-semibold p-2">
+        <Link to={`/room/${serverInfo?.id}/`}>
+          <p>{serverInfo?.name}</p>
+        </Link>
+
+        {serverInfo?.adminid === user?.id && (
+          <button onClick={() => setIsCreateCategoryOpen(true)}>+</button>
+        )}
+        
+      </div>
+      {channels && serverInfo && Object.entries(channels)[0].length > 0 ? (
         <div className="p-2">
-          {Object.entries(sorted).map(([category, channel]) => (
-            <div>
-              <div className="text-sm font-bold text-neutral-500">
-                {category}
-              </div>
-              {channel.map((c) => (
-                <div
-                  key={c.channelid}
-                  className="font-medium text-lg px-2 py-1"
-                >
-                  <Link to={`/room/${server.roomid}/${c.channelid}`}>
-                    #{c.name}
-                  </Link>
-                </div>
-              ))}
-            </div>
-          ))}
+          <RenderChannels
+            serverid={serverInfo?.id}
+            channels={channels}
+            adminId={serverInfo?.adminid}
+          />
         </div>
       ) : (
         <div>no channels</div>
