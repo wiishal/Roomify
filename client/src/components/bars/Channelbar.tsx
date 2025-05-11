@@ -3,13 +3,14 @@ import { Link, useParams } from "react-router-dom";
 import CreateCategory from "../CreateCategory";
 import RenderChannels from "../RenderChannels";
 import { useUser } from "../../hooks/useUser";
-import { useChannel } from "../../hooks/usechannel";
+import { useChannel } from "../../hooks/useChannel";
 
 export default function Channelbar(): JSX.Element {
   const user = useUser();
   const params = useParams();
   const { channels, serverInfo, setChannels } = useChannel(params.roomid);
-  const [isCreateCategoryOpen, setIsCreateCategoryOpen] = useState<boolean>(false);
+  const [isCreateCategoryOpen, setIsCreateCategoryOpen] =
+    useState<boolean>(false);
 
   return (
     <div className="w-full h-full shadow-md p-2 font-mono">
@@ -30,7 +31,6 @@ export default function Channelbar(): JSX.Element {
         {serverInfo?.adminid === user?.id && (
           <button onClick={() => setIsCreateCategoryOpen(true)}>+</button>
         )}
-        
       </div>
       {channels && serverInfo && Object.entries(channels)[0].length > 0 ? (
         <div className="p-2">
