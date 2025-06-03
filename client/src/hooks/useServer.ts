@@ -11,8 +11,7 @@ export default function useServer() {
 
   async function fetchServers() {
     try {
-      const token = localStorage.getItem("token");
-      const res = await getServers(token || "");
+      const res = await getServers();
       if (!res.success) {
         alert(res.message || "failed during fetching server");
         return;

@@ -12,8 +12,7 @@ export function useChannel(serverid: string | undefined) {
   }, [serverid]);
 
   async function fetch(serverid: string) {
-    const token = localStorage.getItem("token");
-    const res = await fetchChannels(serverid, token);
+    const res = await fetchChannels(serverid);
     if (!res.success) {
       alert(res.message || "failed to get server");
       return;
