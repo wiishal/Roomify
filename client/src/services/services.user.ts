@@ -1,5 +1,6 @@
 import axios from "axios";
-import { BaseResponse, loginResponse } from "../type/Response.type";
+import { BaseResponse, loginResponse } from "../type/Server.type";
+import axiosInstance from "./lib/axiosInstance";
 
 const url = import.meta.env.VITE_API_URL;
 
@@ -8,7 +9,7 @@ export async function login(userdetails: {
   password: string;
 }): Promise<loginResponse> {
   try {
-    const res = await axios.post(`${url}/api/v1/auth/login`, {
+    const res = await axiosInstance.post(`/api/v1/auth/login`, {
       userdetails,
     });
 
@@ -40,7 +41,7 @@ export async function signIn(userdetails: {
   email: string;
 }): Promise<loginResponse> {
   try {
-    const res = await axios.post(`${url}/api/v1/auth/signin`, {
+    const res = await axiosInstance.post(`/api/v1/auth/signin`, {
       userdetails,
     });
 

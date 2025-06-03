@@ -1,27 +1,15 @@
 import axios, { isAxiosError } from "axios";
-import { BaseResponse } from "../type/Response.type";
-import { Channel, Server } from "../type/type";
-const url = import.meta.env.VITE_API_URL;
-const token: string = localStorage.getItem("token") || "";
+import {
+  CreateChannelResponse,
+  CreateServerResponse,
+  FetchChannelResponce,
+  GetServersResponse,
+} from "../type/Server.type";
+import axiosInstance from "./lib/axiosInstance";
 
-interface fetchChannelResponce extends BaseResponse {
-  channels?: Record<string, Channel[]>;
-  serverInfo?: Server;
-}
-interface getServersResponse extends BaseResponse {
-  servers?: Server[];
-}
-interface createServerResponse extends BaseResponse {
-  server?: Server;
-}
-
-export async function getServers(token: string): Promise<getServersResponse> {
+export async function getServers(): Promise<GetServersResponse> {
   try {
-    const res = await axios.get(`${url}/api/v1/server`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const res = await axiosInstance.get("/api/v1/server");
     console.log(res.data.servers);
     return {
       success: true,
@@ -48,15 +36,10 @@ export async function getServers(token: string): Promise<getServersResponse> {
 }
 
 export async function fetchChannels(
-  serverid: string,
-  token: string | null
-): Promise<fetchChannelResponce> {
+  serverid: string
+): Promise<FetchChannelResponce> {
   try {
-    const res = await axios.get(`${url}/api/v1/server/channels/${serverid}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const res = await axiosInstance.get(`/api/v1/server/channels/${serverid}`);
     return {
       success: true,
       channels: res.data.channels,
@@ -81,7 +64,7 @@ export async function fetchChannels(
 
 export async function createServer(server: {
   name: string;
-}): Promise<createServerResponse> {
+}): Promise<CreateServerResponse> {
   if (!server)
     return {
       success: false,
@@ -90,15 +73,7 @@ export async function createServer(server: {
     };
 
   try {
-    const res = await axios.post(
-      `${url}/api/v1/server/create`,
-      { server },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const res = await axiosInstance.post(`/api/v1/server/create`, { server });
     return {
       success: true,
       message: res.data.message || "server created successfully",
@@ -121,10 +96,6 @@ export async function createServer(server: {
   }
 }
 
-interface CreateChannelResponse extends BaseResponse {
-  channel?: Channel;
-}
-
 export async function createChannel(channelInfo: {
   name: string;
   serverid: number;
@@ -138,15 +109,9 @@ export async function createChannel(channelInfo: {
     };
 
   try {
-    const res = await axios.post(
-      `${url}/api/v1/server/createChannel`,
-      { channelInfo },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const res = await axiosInstance.post(`/api/v1/server/createChannel`, {
+      channelInfo,
+    });
     return {
       success: true,
       message: res.data.message || "channel created successfully",
