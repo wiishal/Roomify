@@ -19,6 +19,31 @@ export default function Login({
   });
   const [isloading, setIsLoading] = useState<boolean | null>(null);
   const navigate = useNavigate();
+
+  const handleLoginIn = async () => {
+    setIsLoading(true);
+    try {
+      const res = await login(userdetails);
+
+      if (!res || !res.success) {
+        alert(res.message);
+        return;
+      }
+      if (!res.token) {
+        alert("Login succeeded but no token was received");
+        return;
+      }
+      localStorage.setItem("token", res.token);
+      setIsLogged(true);
+      navigate("/");
+    } catch (error) {
+      console.error("login error : ", error);
+      alert("An unexpected error occurred");
+      setIsLoading(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <div className="flex flex-col justify-center bg-neutral-800 items-center text-white gap-5 w-[30rem] h-[25rem]">
       <div className="flex flex-col border p-6 gap-5 w-full h-full">
@@ -45,34 +70,7 @@ export default function Login({
         <div className="flex flex-row gap-3">
           <Button
             className=" px-4 py-1 border rounded-md"
-            onClick={async () => {
-              setIsLoading(true);
-              try {
-                const res = await login(userdetails);
-                if (!res) {
-                  alert("failed during login");
-                  return;
-                }
-                if (!res.success) {
-                  console.log(res);
-                  alert(res.message || "authentication error");
-                  return;
-                }
-                if (!res.token) {
-                  alert("Login succeeded but no token was received");
-                  return;
-                }
-                localStorage.setItem("token", res.token);
-                setIsLogged(true);
-                navigate("/");
-              } catch (error) {
-                console.error("login error : ", error);
-                alert("An unexpected error occurred");
-                setIsLoading(false);
-              } finally {
-                setIsLoading(false);
-              }
-            }}
+            onClick={handleLoginIn}
           >
             {isloading ? "Loading" : "login"}
           </Button>
