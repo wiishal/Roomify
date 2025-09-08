@@ -1,17 +1,16 @@
 import { useEffect, useState } from "react";
 import { fetchChannels } from "../services/services.server";
-import { Channel, Server } from "../type/type";
+import { Channel } from "../type/type";
 
-export function useChannel(serverid: string | undefined) {
+export function useChannel(serverid: number | string | undefined) {
   const [channels, setChannels] = useState<Record<string, Channel[]>>({});
-  const [serverInfo, setServerinfo] = useState<Server | null>(null);
 
   useEffect(() => {
     if (!serverid) return;
     fetch(serverid);
   }, [serverid]);
 
-  async function fetch(serverid: string) {
+  async function fetch(serverid: number | string) {
     const res = await fetchChannels(serverid);
     if (!res.success) {
       alert(res.message || "failed to get server");
@@ -21,14 +20,9 @@ export function useChannel(serverid: string | undefined) {
       alert(res.message || "unable to get server channels");
       return;
     }
-    if (!res.serverInfo) {
-      alert(res.message || "unable to get serverinfo");
-      return;
-    }
     setChannels(res.channels);
-    setServerinfo(res.serverInfo);
     console.log(res.channels, ": from sidebar");
   }
 
-  return { channels, serverInfo, setChannels, refetchChannel: fetch };
+  return { channels, setChannels, refetchChannel: fetch };
 }

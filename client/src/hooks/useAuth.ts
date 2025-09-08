@@ -4,6 +4,8 @@ import { verifyToken } from "../services/services.user";
 export function useAuth() {
   const [isLogged, setIsLogged] = useState<boolean | null>(null);
   console.log(isLogged);
+
+  
   useEffect(() => {
     async function verify() {
       const token = localStorage.getItem("token");
