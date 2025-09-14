@@ -35,7 +35,7 @@ export default function Serverbar() {
           ))}
         </div>
       ) : (
-        <div>null</div>
+        <div><p className="font-semibold">Loading...</p></div>
       )}
 
       <button

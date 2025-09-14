@@ -11,6 +11,7 @@ export default function CreateChannel({
   Close: () => any;
 }) {
   const [channel, setChannel] = useState<string>("");
+  
 
   async function CreateChannel() {
     if (channel === "" && !serverid && !category) {

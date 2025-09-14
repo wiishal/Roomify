@@ -9,7 +9,8 @@ export default function Auth({
   setIsLogged: Dispatch<SetStateAction<boolean | null>>;
   onClose: () => void;
 }): JSX.Element {
-  const [alreadyHasAcc, SetAlreadyHasAcc] = useState(false);
+  const [alreadyHasAcc, SetAlreadyHasAcc] = useState(true);
+  
   if (alreadyHasAcc)
     return (
       <Login
