@@ -23,3 +23,6 @@ export interface CreateServerResponse extends BaseResponse {
 export interface CreateChannelResponse extends BaseResponse {
   channel?: Channel;
 }
+export interface GetServerInfo extends BaseResponse {
+  serverInfo?: Server;
+}

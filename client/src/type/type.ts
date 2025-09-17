@@ -1,13 +1,17 @@
 export interface Channel {
-  channelid: number;
-  name: string;
-  category:string
+  id: number;
+  name: String;
+  createdAt: string;
+  serverid: number;
+  category: string;
 }
 
 export interface Server {
-  roomid: number;
+  id: number;
+  profile: string;
+  description: string;
   name: string;
-  upvote?: number;
-  channel: Channel[];
+  createdAt: string;
+  upvote: number;
+  adminid: number;
 }
- 
