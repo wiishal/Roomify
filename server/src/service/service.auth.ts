@@ -4,17 +4,17 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import { prisma } from "../lib/prisma";
+import {
+  CheckCreadentialResponse,
+  LoginInUserResponse,
+} from "../type/auth.types";
 
-interface signInResponse extends BaseResponce {
-  isEmailExisted?: boolean;
-  isUsernameExisted?: boolean;
-}
 export async function signToken({
   username,
-  userid,
+  id,
 }: {
   username: string;
-  userid: number;
+  id: number;
 }) {
   try {
     const secret = process.env.JWT_SECRET;
@@ -22,7 +22,7 @@ export async function signToken({
     if (!secret) {
       throw new Error("JWT_SECRET is not defined in environment variables");
     }
-    const token = jwt.sign({ user: username, userid: userid }, secret);
+    const token = jwt.sign({ user: username, id: id }, secret);
     return token;
   } catch (error) {
     console.error("error while signing token: ", error);
@@ -34,7 +34,7 @@ export async function CheckCreadential(userdetails: {
   username: string;
   password: string;
   email: string;
-}): Promise<signInResponse> {
+}): Promise<CheckCreadentialResponse> {
   try {
     const user = await prisma.user.findMany({
       where: {
@@ -45,9 +45,9 @@ export async function CheckCreadential(userdetails: {
     if (user.length === 0) {
       return {
         success: true,
+        isUserExist: false,
         isUsernameExisted: false,
         isEmailExisted: false,
-        message: " user doesn't exist",
       };
     }
 
@@ -56,6 +56,7 @@ export async function CheckCreadential(userdetails: {
 
     return {
       success: true,
+      isUserExist: true,
       isUsernameExisted: username,
       isEmailExisted: email,
       message: "user found",
@@ -64,11 +65,12 @@ export async function CheckCreadential(userdetails: {
     return { success: false, message: "failed during checking creadential" };
   }
 }
+
 export async function SignInUser(userdetails: {
   username: string;
   password: string;
   email: string;
-}): Promise<BaseResponce> {
+}): Promise<LoginInUserResponse> {
   try {
     const user = await prisma.user.create({
       data: {
@@ -82,7 +84,7 @@ export async function SignInUser(userdetails: {
     if (!user) {
       return { success: false, message: "Error while creating user" };
     }
-    return { success: true, message: "user created!" };
+    return { success: true, message: "user created!", user: user };
   } catch (error) {
     console.error("error while Signin user: ", error);
     return {
@@ -96,25 +98,25 @@ export async function LoginInUser(userdetails: {
   username: string;
   password: string;
   email: string;
-}): Promise<BaseResponce> {
+}): Promise<LoginInUserResponse> {
   try {
-    const user = await prisma.user.findUnique({
+    const CurrentUser = await prisma.user.findUnique({
       where: {
         username: userdetails.username,
       },
     });
-    if (!user) {
+    if (!CurrentUser) {
       return { success: false, message: "no user found" };
     }
-    if (user.password !== userdetails.password) {
-      return { success: true, message: "user found!" };
+    if (CurrentUser.password !== userdetails.password) {
+      return { success: false, message: "wrong password" };
     }
-    return { success: false, message: "wrong password" };
+    return { success: true, message: "user found!", user: CurrentUser };
   } catch (error) {
     console.error("error while Signin user: ", error);
     return {
       success: false,
-      message: "unexpected error occured while creating user",
+      message: "unexpected error occured while login user",
     };
   }
 }
