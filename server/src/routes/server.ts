@@ -10,6 +10,8 @@ import {
 } from "../service/service.server";
 
 const ServerRouter = express.Router();
+
+//token verification
 ServerRouter.use(tokenVerification);
 
 ServerRouter.get("/", async (req, res) => {
@@ -26,6 +28,23 @@ ServerRouter.get("/", async (req, res) => {
   });
 });
 
+
+ServerRouter.get("/serverInfo/:id", async (req, res) => {
+  const id: number = Number(req.params.id);
+  if (isNaN(id)) {
+    res.status(400).json({ message: "Invalid ID" });
+    return;
+  }
+  const serverInfo = await GetServerInfo(id);
+  if (!serverInfo.success) {
+    res.status(401).json({ message: serverInfo.error });
+    return;
+  }
+  res.status(200).json({
+    serverInfo: serverInfo.server,
+    message: "serverInfo fetch successfully",
+  });
+});
 ServerRouter.get("/channels/:id", async (req, res) => {
   const id: number = Number(req.params.id);
   if (isNaN(id)) {
@@ -33,19 +52,14 @@ ServerRouter.get("/channels/:id", async (req, res) => {
     return;
   }
   const currentServer = await GetChannels(id);
-  const serverInfo = await GetServerInfo(id);
 
   if (!currentServer.success) {
     res.status(401).json({ message: currentServer.error });
     return;
   }
-  if (!serverInfo.success) {
-    res.status(401).json({ message: serverInfo.error });
-    return;
-  }
+
   res.status(200).json({
     channels: currentServer.channels,
-    serverInfo: serverInfo.server,
     message: "channel fetch successfully",
   });
 });
