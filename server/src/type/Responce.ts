@@ -1,4 +1,5 @@
-interface BaseResponce{
-    success: boolean,
-    message:string
-} 
+interface BaseResponse {
+  success: boolean;
+  message?: string;
+  error?: string;
+}
