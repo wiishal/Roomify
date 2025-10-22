@@ -3,6 +3,7 @@ import {
   CreateChannelResponse,
   CreateServerResponse,
   FetchChannelResponce,
+  GetServerInfo,
   GetServersResponse,
 } from "../type/Server.type";
 import axiosInstance from "./lib/axiosInstance";
@@ -34,16 +35,39 @@ export async function getServers(): Promise<GetServersResponse> {
     };
   }
 }
-
+export async function getServerInfo(serverid: string): Promise<GetServerInfo> {
+  try {
+    const res = await axiosInstance.get(
+      `/api/v1/server/serverInfo/${serverid}`
+    );
+    return {
+      success: true,
+      serverInfo: res.data.serverInfo,
+      message: res.data.message,
+    };
+  } catch (error) {
+    if (isAxiosError(error) && error.response) {
+      return {
+        success: false,
+        status: error.response.status,
+        message: error.response.data.message || "failed during getting server",
+      };
+    }
+    return {
+      success: false,
+      message: "internal or connection error occured",
+      status: 404,
+    };
+  }
+}
 export async function fetchChannels(
-  serverid: string
+  serverid: number | string
 ): Promise<FetchChannelResponce> {
   try {
     const res = await axiosInstance.get(`/api/v1/server/channels/${serverid}`);
     return {
       success: true,
       channels: res.data.channels,
-      serverInfo: res.data.serverInfo,
       message: res.data.message || "fetched server successfully",
     };
   } catch (error) {
