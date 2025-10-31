@@ -15,3 +15,14 @@ export interface Server {
   upvote: number;
   adminid: number;
 }
+
+export interface Message {
+  id: number;
+  content: string;
+  senderId: number;
+  timestamp: string;
+}
+export interface MessageContextType {
+  Messages: Record<number, Record<number, Message[]>>;
+  addMesssage: (serverId: number, chanelId: number, message: Message) => void;
+}
