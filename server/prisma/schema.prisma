@@ -20,6 +20,7 @@ model User{
   password String 
   email String
   createdAt DateTime @default(now())
+  last_seen DateTime @default(now())
   server Server[]
   memberof Server[] @relation("serverMembers")
   message Message[]
@@ -32,13 +33,14 @@ model Server{
   name String
   createdAt  DateTime   @default(now())
   upvote Int
-  user  User @relation(fields: [adminid], references: [id])
+  user  User @relation(fields: [adminid], references: [id]) 
   adminid Int
   channels Channel[]
+  message Message[]
   members User[] @relation("serverMembers")
 }
 
-model Channel{
+model Channel{ 
   id Int @id @default(autoincrement())
   name String
   createdAt  DateTime   @default(now())
@@ -56,4 +58,7 @@ model Message{
   userId Int
   channel Channel @relation(fields: [channelId],references: [id])
   channelId Int
+  server Server @relation(fields: [serverId],references: [id])
+  serverId Int
+  delivered Boolean @default(false)
 }
