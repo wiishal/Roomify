@@ -1,16 +1,20 @@
 import { Channel } from "@prisma/client";
 import { prisma } from "../lib/prisma";
-import { defaultChannels } from "../lib/serverConfig";
 import {
+  CreateChannelResponse,
   createServerInputs,
   CreateServerResponse,
+  GetChannelsResponse,
   GetServerInfoResponse,
   GetServersResponse,
-} from "../type/server.types";
+} from "../types/server.types";
+import { defaultChannels } from "../utils/serverConfig";
 
-export async function GetServers(): Promise<GetServersResponse> {
+export async function GetServers(userId: number): Promise<GetServersResponse> {
   try {
-    const servers = await prisma.server.findMany();
+    const servers = await prisma.server.findMany({
+      where: { members: { some: { id: userId } } },
+    });
     return {
       success: true,
       message: "fetched servers successfully",
@@ -75,9 +79,7 @@ export async function CreateDefaultChannels(
     };
   }
 }
-interface GetChannelsResponse extends BaseResponse {
-  channels?: Record<string, Channel[]>;
-}
+
 export async function GetChannels(
   serverId: number
 ): Promise<GetChannelsResponse> {
@@ -125,9 +127,7 @@ export async function GetServerInfo(
   }
 }
 
-interface CreateChannelResponse extends BaseResponse {
-  channel?: Channel;
-}
+
 
 export async function CreateChannel(channelInfo: {
   name: string;

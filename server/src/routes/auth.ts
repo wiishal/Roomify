@@ -1,10 +1,6 @@
 import express from "express";
-import {
-  CheckCreadential,
-  LoginInUser,
-  SignInUser,
-  signToken,
-} from "../service/service.auth";
+import { LoginInUser, SignInUser } from "../service/service.auth";
+import { CheckCreadential, signToken } from "../utils/auth.utils";
 
 const AuthRouter = express.Router();
 
@@ -38,7 +34,6 @@ AuthRouter.post("/signin", async (req, res) => {
   }
 
   if (!createdUser.user) {
-
     return;
   }
   const currentToken = await signToken({
