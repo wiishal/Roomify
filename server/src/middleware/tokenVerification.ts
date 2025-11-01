@@ -18,7 +18,7 @@ export function tokenVerification(
     }
     const decoded = jwt.verify(token, secret) as jwt.JwtPayload;
     console.log("decoded token", decoded);
-    req.user = decoded;
+    req.user = decoded; //  attaching user info
     next();
   } catch (error) {
     res.status(500).json({ message: "internal server error" });
