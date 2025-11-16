@@ -1,5 +1,5 @@
-import { Channel } from "@prisma/client";
-import { prisma } from "../lib/prisma";
+import type { Channel } from "@prisma/client";
+import { prisma } from "../lib/prisma.js";
 import {
   CreateChannelResponse,
   createServerInputs,
@@ -7,8 +7,8 @@ import {
   GetChannelsResponse,
   GetServerInfoResponse,
   GetServersResponse,
-} from "../types/server.types";
-import { defaultChannels } from "../utils/serverConfig";
+} from "../types/server.types.js";
+import { defaultChannels } from "../utils/serverConfig.js";
 
 export async function GetServers(userId: number): Promise<GetServersResponse> {
   try {
