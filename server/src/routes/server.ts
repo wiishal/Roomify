@@ -1,5 +1,5 @@
 import express from "express";
-import { tokenVerification } from "../middleware/tokenVerification";
+import { tokenVerification } from "../middleware/tokenVerification.js";
 import {
   CreateChannel,
   CreateDefaultChannels,
@@ -7,7 +7,7 @@ import {
   GetChannels,
   GetServerInfo,
   GetServers,
-} from "../service/service.server";
+} from "../service/service.server.js";
 
 const ServerRouter = express.Router();
 

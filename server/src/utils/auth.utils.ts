@@ -1,7 +1,7 @@
 
 import jwt from "jsonwebtoken";
-import { prisma } from "../lib/prisma";
-import { CheckCreadentialResponse } from "../types/auth.types";
+import { prisma } from "../lib/prisma.js";
+import { CheckCreadentialResponse } from "../types/auth.types.js";
 
 export async function CheckCreadential(userdetails: {
   username: string;

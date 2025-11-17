@@ -1,8 +1,8 @@
 const secret = process.env.JWT_SECRET;
 import jwt from "jsonwebtoken";
 import { WebSocket as WsType } from "ws";
-import { check_member, save_message } from "../service/service.message";
-import { rooms } from "../utils/serverConfig";
+import { check_member, save_message } from "../service/service.message.js";
+import { rooms } from "../utils/serverConfig.js";
 
 const online_users = new Map<number, WsType>();
 

@@ -1,6 +1,6 @@
 import express from "express";
-import { LoginInUser, SignInUser } from "../service/service.auth";
-import { CheckCreadential, signToken } from "../utils/auth.utils";
+import { LoginInUser, SignInUser } from "../service/service.auth.js";
+import { CheckCreadential, signToken } from "../utils/auth.utils.js";
 
 const AuthRouter = express.Router();
 
