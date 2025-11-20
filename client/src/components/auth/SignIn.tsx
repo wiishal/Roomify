@@ -35,7 +35,7 @@ export default function SignIn({
       localStorage.setItem("token", res.token);
       setIsLogged(true);
       navigate("/");
-    } catch (error) {
+    } catch {
       alert("An unexpected error occurred");
       setIsLoading(false);
     } finally {

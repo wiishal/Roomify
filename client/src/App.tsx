@@ -2,24 +2,22 @@
 import { Routes, Route, useNavigate } from "react-router-dom";
 import Home from "./components/Home";
 import Room from "./components/Room";
-import Login from "./components/auth/Login";
 import Layout from "./components/layout/Layout";
 import SidebarLayout from "./components/layout/SidebarLayout";
 import ChannelCtx from "./components/ChannelCtx";
 import Landingpage from "./components/Landingpage";
 import { useAuth } from "./hooks/useAuth";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export default function AppRoutes() {
   const { isLogged, setIsLogged } = useAuth();
-  const [channels, setChannels] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     if (isLogged === false) {
       navigate("/", { replace: true });
     }
-  }, [isLogged]);
+  }, [isLogged,navigate]);
 
   if (isLogged === null) return <div>Loading...</div>;
 

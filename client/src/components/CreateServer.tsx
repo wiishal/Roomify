@@ -29,7 +29,7 @@ export default function CreateServer({ onClose }: Props) {
       }
       alert(res.message);
       refetch();
-    } catch (error) {
+    } catch {
       alert("internal server error");
     }
   }

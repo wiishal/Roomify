@@ -26,7 +26,6 @@ export default function Channelbar(): JSX.Element {
       {serverInfo ? (
         <div className="p-2">
           <RenderChannels
-            setIsCreateCategoryOpen={setIsCreateCategoryOpen}
             isCreateCategoryOpen={isCreateCategoryOpen}
             serverid={serverInfo?.id}
             adminId={serverInfo?.adminid}

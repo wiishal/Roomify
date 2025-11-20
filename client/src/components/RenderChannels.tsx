@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import CreateChannel from "./CreateChannel";
 import { Link } from "react-router-dom";
 import { useUser } from "../hooks/useUser";
@@ -6,15 +6,14 @@ import { useChannel } from "../hooks/useChannel";
 import CreateCategory from "./CreateCategory";
 
 export default function RenderChannels({
-  adminId, 
+  adminId,
   serverid,
-  setIsCreateCategoryOpen,
   isCreateCategoryOpen,
 }: {
-  setIsCreateCategoryOpen: Dispatch<SetStateAction<boolean>>;
   isCreateCategoryOpen: boolean;
   serverid: number;
   adminId: number;
+
 }) {
   const [isCreateChannelCardOpen, setIsCreateChannelCardOpen] =
     useState<boolean>(false);
@@ -27,7 +26,7 @@ export default function RenderChannels({
       {isCreateCategoryOpen && (
         <div className="fixed inset-0 z-10 bg-black bg-opacity-50 flex justify-center items-center">
           <CreateCategory
-            Close={() => setIsCreateCategoryOpen(false)}
+            CloseCreateCategory={setIsCreateChannelCardOpen}
             setChannels={setChannels}
           />
         </div>
@@ -46,7 +45,7 @@ export default function RenderChannels({
                 <CreateChannel
                   serverid={serverid}
                   category={category}
-                  Close={() => setIsCreateChannelCardOpen(false)}
+                  setIsCreateChannelCardOpen={setIsCreateChannelCardOpen}
                 />
               </div>
             )}

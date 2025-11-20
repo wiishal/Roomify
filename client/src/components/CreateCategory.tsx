@@ -2,10 +2,10 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { Channel } from "../type/type";
 
 export default function CreateCategory({
-  Close,
+  CloseCreateCategory,
   setChannels,
 }: {
-  Close: () => any;
+  CloseCreateCategory: Dispatch<SetStateAction<boolean>>;
   setChannels: Dispatch<SetStateAction<Record<string, Channel[]>>>;
 }) {
   const [category, setCategory] = useState<string>("");
@@ -13,7 +13,10 @@ export default function CreateCategory({
     <div className="border bg-slate-100 p-3 rounded-sm">
       <div className="flex justify-between p-3">
         <h1 className="text-xl">Create category</h1>
-        <button onClick={Close} className="text-white bg-red-500 px-3  rounded">
+        <button
+          onClick={() => CloseCreateCategory(false)}
+          className="text-white bg-red-500 px-3  rounded"
+        >
           x
         </button>
       </div>

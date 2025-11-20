@@ -22,7 +22,7 @@ export default function useServer() {
         return;
       }
       setServer(res.servers);
-    } catch (error) {
+    } catch  {
       setLoading(false);
       alert("expected error accured");
     } finally {

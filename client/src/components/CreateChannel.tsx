@@ -1,14 +1,14 @@
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { createChannel } from "../services/services.server";
 
 export default function CreateChannel({
   serverid,
   category,
-  Close,
+  setIsCreateChannelCardOpen,
 }: {
   serverid: number;
   category: string;
-  Close: () => any;
+setIsCreateChannelCardOpen: Dispatch<SetStateAction<boolean>>
 }) {
   const [channel, setChannel] = useState<string>("");
   
@@ -33,13 +33,13 @@ export default function CreateChannel({
       return;
     }
     alert(`channel ${res.channel.name} created`);
-    Close();
+    setIsCreateChannelCardOpen(false);
   }
   return (
     <div className="border bg-slate-100 p-3 rounded-sm">
       <div className="flex justify-between p-3">
         <h1 className="text-xl">Create Channel</h1>
-        <button className="text-white bg-red-500 px-3  rounded" onClick={Close}>
+        <button className="text-white bg-red-500 px-3  rounded" onClick={()=>setIsCreateChannelCardOpen}>
           x
         </button>
       </div>

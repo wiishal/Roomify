@@ -3,7 +3,7 @@ import axios from "axios";
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
 });
-
+console.log(import.meta.env.VITE_API_URL)
 axiosInstance.interceptors.request.use((config) => {
   const isAuthRequest =
     config.url?.includes("/api/signup") || config.url?.includes("api/login");

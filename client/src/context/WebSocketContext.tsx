@@ -17,7 +17,7 @@ export const WebSocketProvider: React.FC<{ children: ReactNode }> = ({
 
   useEffect(() => {
     if (!isLogged) return;
-    const socket = new WebSocket("ws://localhost:4000");
+    const socket = new WebSocket(import.meta.env.WS_URL);
     socketRef.current = socket;
 
     socket.onopen = () => {
@@ -43,9 +43,3 @@ export const WebSocketProvider: React.FC<{ children: ReactNode }> = ({
   );
 };
 
-export const useWebsocket = () => {
-  const ctx = useContext(WebSocketContext);
-  if (!ctx)
-    throw new Error("useWebSocket must be used within WebSocketProvider");
-  return ctx;
-};
