@@ -2,8 +2,8 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-import { prisma } from "../lib/prisma.js";
-import { LoginInUserResponse } from "../types/auth.types.js";
+import { prisma } from "../lib/prisma";
+import { LoginInUserResponse } from "../types/auth.types";
 
 
 export async function SignInUser(userdetails: {

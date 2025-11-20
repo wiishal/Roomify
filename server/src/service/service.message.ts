@@ -1,4 +1,5 @@
-import { prisma } from "../lib/prisma.js";
+import { prisma } from "../lib/prisma";
+import { saveMessageParams, saveMessageResponse } from "../types/message.type";
 
 export async function check_member(
   send_to_server_id: number,

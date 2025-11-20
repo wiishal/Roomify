@@ -4,11 +4,12 @@ import cors from "cors";
 import "dotenv/config";
 
 // console.log(process.env.DATABASE_URL);
-import AuthRouter from "./routes/auth.js";
-import ServerRouter from "./routes/server.js";
+import AuthRouter from "./routes/auth";
+import ServerRouter from "./routes/server";
 
-import msgHandler, { cleanupOnClose } from "./routes/message.js";
-import { loadRooms } from "./utils/serverConfig.js";
+import msgHandler, { cleanupOnClose } from "./routes/message";
+import { loadRooms } from "./utils/serverConfig";
+import { Msg, MsgType } from "./types/message.type";
 //data structure
 
 const app = express();

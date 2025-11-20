@@ -1,4 +1,5 @@
 import { User } from "@prisma/client";
+import { BaseResponse } from "./Responce";
 
 export interface CheckCreadentialResponse extends BaseResponse {
   isUserExist?: boolean;

@@ -1,4 +1,5 @@
 import { Channel, Server } from "@prisma/client";
+import { BaseResponse } from "./Responce";
 
 export interface createServerInputs {
   serverName: string;
