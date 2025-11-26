@@ -16,7 +16,7 @@ export const WebSocketProvider: React.FC<{ children: ReactNode }> = ({
 
   useEffect(() => {
     if (!isLogged) return;
-    const socket = new WebSocket(import.meta.env.WS_URL);
+    const socket = new WebSocket(import.meta.env.VITE_WS_URL);
     socketRef.current = socket;
 
     socket.onopen = () => {

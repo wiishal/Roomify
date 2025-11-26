@@ -2,7 +2,7 @@ import React, { createContext, useState } from "react";
 import { Message, MessageContextType } from "../type/type";
 
 
-const MessageContext = createContext<MessageContextType | null>(null);
+export const MessageContext = createContext<MessageContextType | null>(null);
 
 export const MessageContextProvider: React.FC<{
   children: React.ReactNode;

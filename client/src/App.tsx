@@ -8,6 +8,8 @@ import ChannelCtx from "./components/ChannelCtx";
 import Landingpage from "./components/Landingpage";
 import { useAuth } from "./hooks/useAuth";
 import { useEffect } from "react";
+import { WebSocketProvider } from "./context/WebSocketContext";
+import { MessageContextProvider } from "./context/MessageContext";
 
 export default function AppRoutes() {
   const { isLogged, setIsLogged } = useAuth();
@@ -17,7 +19,7 @@ export default function AppRoutes() {
     if (isLogged === false) {
       navigate("/", { replace: true });
     }
-  }, [isLogged,navigate]);
+  }, [isLogged, navigate]);
 
   if (isLogged === null) return <div>Loading...</div>;
 
@@ -26,16 +28,20 @@ export default function AppRoutes() {
       <Route path="*" element={<Landingpage setIsLogged={setIsLogged} />} />
     </Routes>
   ) : (
-    <div className="h-screen w-screen flex flex-row-reverse">
-      <Routes>
-        <Route element={<Layout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/room/:roomid" element={<SidebarLayout />}>
-            <Route index element={<Room />} />
-            <Route path=":channel" element={<ChannelCtx />} />
-          </Route>
-        </Route>
-      </Routes>
-    </div>
+    <MessageContextProvider>
+      <WebSocketProvider>
+        <div className="h-screen w-screen flex flex-row-reverse">
+          <Routes>
+            <Route element={<Layout />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/room/:roomid" element={<SidebarLayout />}>
+                <Route index element={<Room />} />
+                <Route path=":channel" element={<ChannelCtx />} />
+              </Route>
+            </Route>
+          </Routes>
+        </div>
+      </WebSocketProvider>
+    </MessageContextProvider>
   );
 }
