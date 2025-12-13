@@ -1,8 +1,8 @@
-
+import { AuthUser } from "./types/Responce";
  declare global {
   namespace Express {
     interface Request {
-      user?: import("jsonwebtoken").JwtPayload
+      user?: AuthUser
     }
   }
 }
@@ -10,6 +10,7 @@
  declare module "ws" {
   interface WebSocket {
     userId?: number;
+    username?:string
   }
 }
 

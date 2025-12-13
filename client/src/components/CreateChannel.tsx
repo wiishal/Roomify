@@ -5,13 +5,14 @@ export default function CreateChannel({
   serverid,
   category,
   setIsCreateChannelCardOpen,
+  refetchChannel,
 }: {
   serverid: number;
   category: string;
-setIsCreateChannelCardOpen: Dispatch<SetStateAction<boolean>>
+  setIsCreateChannelCardOpen: Dispatch<SetStateAction<boolean>>;
+  refetchChannel: (serverid: string | number) => Promise<void>;
 }) {
   const [channel, setChannel] = useState<string>("");
-  
 
   async function CreateChannel() {
     if (channel === "" && !serverid && !category) {
@@ -33,13 +34,17 @@ setIsCreateChannelCardOpen: Dispatch<SetStateAction<boolean>>
       return;
     }
     alert(`channel ${res.channel.name} created`);
+    refetchChannel(serverid);
     setIsCreateChannelCardOpen(false);
   }
   return (
     <div className="border bg-slate-100 p-3 rounded-sm">
       <div className="flex justify-between p-3">
         <h1 className="text-xl">Create Channel</h1>
-        <button className="text-white bg-red-500 px-3  rounded" onClick={()=>setIsCreateChannelCardOpen}>
+        <button
+          className="text-white bg-red-500 px-3  rounded"
+          onClick={() => setIsCreateChannelCardOpen(false)}
+        >
           x
         </button>
       </div>

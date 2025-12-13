@@ -1,17 +1,21 @@
 import React, { createContext, useState } from "react";
-import { Message, MessageContextType } from "../type/type";
+import { Message } from "../type/type";
 
+export interface MessageContextType {
+  messages: Record<number, Record<number, Message[]>>;
+  addMessage: (serverId: number, chanelId: number, message: Message) => void;
+}
 
 export const MessageContext = createContext<MessageContextType | null>(null);
 
 export const MessageContextProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
-  const [Messages, setMessages] = useState<
-    Record<number, Record<number, Message[]>>
+  const [messages, setMessages] = useState<
+    Record<number, Record<number, Message[]>> 
   >({});
 
-  const addMesssage = (
+  const addMessage = (
     serverId: number,
     chanelId: number,
     message: Message
@@ -25,10 +29,11 @@ export const MessageContextProvider: React.FC<{
     }));
   };
 
+  // console.log(Messages[123]) -> pass serverid to get channel record(object)
+
   return (
-    <MessageContext.Provider value={{ Messages, addMesssage }}>
+    <MessageContext.Provider value={{ messages, addMessage }}>
       {children}
     </MessageContext.Provider>
   );
 };
-

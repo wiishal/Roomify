@@ -1,8 +1,10 @@
 import { Dispatch, JSX, SetStateAction, useState } from "react";
 import { login } from "../../services/services.user";
 import { useNavigate } from "react-router-dom";
-import Button from "../ui/Button";
-import Input from "../ui/Input";
+
+const Spinner = () => (
+  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+);
 
 export default function Login({
   setIsLogged,
@@ -17,72 +19,121 @@ export default function Login({
     username: "",
     password: "",
   });
-  const [isloading, setIsLoading] = useState<boolean | null>(null);
+  const [isloading, setIsLoading] = useState(false);
+  const [loginError, setLoginError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const handleLoginIn = async () => {
+    if (!userdetails.username || !userdetails.password) {
+      setLoginError("Please enter both username and password.");
+      return;
+    }
+    
     setIsLoading(true);
+    setLoginError(null); 
+
     try {
       const res = await login(userdetails);
 
       if (!res || !res.success) {
-        alert(res.message);
+        setLoginError(res?.message || "Login failed. Please check your credentials.");
         return;
       }
+
       if (!res.token) {
-        alert("Login succeeded but no token was received");
+        setLoginError("Login succeeded but session token was not received.");
         return;
       }
+      
       localStorage.setItem("token", res.token);
       setIsLogged(true);
+      onClose(); 
       navigate("/");
+      
     } catch (error) {
       console.error("login error : ", error);
-      alert("An unexpected error occurred");
-      setIsLoading(false);
+      setLoginError("A network error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
+
   return (
-    <div className="flex flex-col justify-center bg-neutral-800 items-center text-white gap-5 w-[30rem] h-[25rem]">
-      <div className="flex flex-col border p-6 gap-5 w-full h-full">
-        <div className="flex flex-col gap-2">
-          <label htmlFor="">Username</label>
-          <Input
-            className="bg-transparent border p-2"
+    <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-2xl border border-gray-100 mx-auto transition-all duration-300">
+      
+      <h2 className="text-3xl font-extrabold text-gray-900 mb-2 text-center">
+        Welcome Back!
+      </h2>
+      <p className="text-sm text-gray-500 mb-8 text-center">
+        Sign in to access your account.
+      </p>
+
+      {loginError && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6 text-sm" role="alert">
+          {loginError}
+        </div>
+      )}
+
+      <div className="space-y-6">
+        <div className="flex flex-col">
+          <label htmlFor="username" className="text-sm font-medium text-gray-700 mb-1">
+            Username
+          </label>
+          <input
+            id="username"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 outline-none"
             type="text"
+            placeholder="Enter your username"
+            value={userdetails.username}
             onChange={(e) => {
               setuserdetails((prev) => ({ ...prev, username: e.target.value }));
             }}
           />
         </div>
-        <div className="flex flex-col gap-2">
-          <label htmlFor="">Password</label>
-          <Input
-            className="bg-transparent border p-2"
+
+        <div className="flex flex-col">
+          <label htmlFor="password" className="text-sm font-medium text-gray-700 mb-1">
+            Password
+          </label>
+          <input 
+            id="password"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 outline-none"
             type="password"
+            placeholder="Enter your password"
+            value={userdetails.password}
             onChange={(e) => {
               setuserdetails((prev) => ({ ...prev, password: e.target.value }));
             }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') handleLoginIn();
+            }}
           />
         </div>
-        <div className="flex flex-row gap-3">
-          <Button
-            className=" px-4 py-1 border rounded-md"
-            onClick={handleLoginIn}
-          >
-            {isloading ? "Loading" : "login"}
-          </Button>
-          <Button
+      </div>
+
+      <div className="mt-8 space-y-3">
+        <button
+          className="w-full flex justify-center items-center px-4 py-2.5 text-lg font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition duration-200 disabled:bg-blue-400 disabled:cursor-not-allowed"
+          onClick={handleLoginIn}
+          disabled={isloading}
+        >
+          {isloading ? <Spinner /> : "Login"}
+        </button>
+        
+        <div className="flex justify-between items-center pt-2">
+          <button
             onClick={onClose}
-            className=" px-4 py-1 bg-red-700 rounded-md"
+            className="text-sm text-gray-600 hover:text-red-600 transition duration-150"
           >
-            Close
-          </Button>
-          <Button onClick={onAlreadyHasAcc} className="font-normal text-sm">
-            Do no have an account
-          </Button>
+            Cancel
+          </button>
+
+          <button
+            onClick={onAlreadyHasAcc}
+            className="text-sm font-medium text-blue-600 hover:text-blue-800 transition duration-150"
+          >
+            Don't have an account? Sign up
+          </button>
         </div>
       </div>
     </div>

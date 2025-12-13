@@ -1,46 +1,30 @@
-import { prisma } from "../lib/prisma";
-import { saveMessageParams, saveMessageResponse } from "../types/message.type";
+import { BroadcastToRoomParams } from "../types/message.type";
+import { online_users, rooms } from "../utils/serverConfig";
+import { WebSocket as WsType } from "ws";
 
-export async function check_member(
-  send_to_server_id: number,
-  current_user: number
-): Promise<boolean> {
-  try {
-    const ismember = await prisma.server.findFirst({
-      where: {
-        id: send_to_server_id,
-        members: { some: { id: current_user } },
-      },
-    });
+export function broadcastToRoom(message: BroadcastToRoomParams) {
+  const memberList = rooms.get(message.serverId);
+  online_users.forEach((ws, user) => {
+    if (!memberList?.has(user)) return;
 
-    if (ismember) {
-      return true;
+    if (ws && ws.readyState === ws.OPEN) {
+      ws.send(
+        JSON.stringify({
+          type: "roomMessage",
+          senderId: message.userId,
+          serverId: message.serverId,
+          senderUsername: message.senderUsername,
+          channelId: message.channelId,
+          content: message.content,
+        })
+      );
     }
-    return false;
-  } catch (error) {
-    console.log("error occured while checking member: service.message.ts");
-    return false;
-  }
+  });
 }
 
-export async function save_message(
-  message: saveMessageParams
-): Promise<saveMessageResponse> {
-
-  try {
-    const savedMessage = await prisma.message.create({
-      data: {
-        userId: message.userId,
-        channelId: message.channelId,
-        serverId: message.serverId,
-        content: message.content,
-      },
-    });
-
-    return { success: true, message: "message saved!" };
-
-  } catch (error) {
-    
-    return { success: false, error: "message not saved!" };
-  }
+export function cleanupOnClose(ws: WsType) {
+  const user = ws.userId;
+  if (!user) return;
+  online_users.delete(user);
+  console.log(`${user} left the server`);
 }

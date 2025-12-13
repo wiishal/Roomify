@@ -21,3 +21,8 @@ export interface CreateChannelResponse extends BaseResponse {
 export interface GetChannelsResponse extends BaseResponse {
   channels?: Record<string, Channel[]>;
 }
+export enum JoinStatus {
+  pending = 'pending',
+  accepted = 'accepted',
+  rejected = 'rejected'
+}

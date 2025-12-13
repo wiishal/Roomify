@@ -3,3 +3,9 @@ export interface BaseResponse {
   message?: string;
   error?: string;
 }
+
+
+export interface AuthUser {
+  id: number;
+  username: string;
+}

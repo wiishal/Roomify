@@ -1,16 +1,16 @@
 import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
 
 dotenv.config();
 
 import { prisma } from "../lib/prisma";
-import { LoginInUserResponse } from "../types/auth.types";
-
+import { CheckCreadentialResponse, LoginInUserResponse, SignInUserResponse } from "../types/auth.types";
 
 export async function SignInUser(userdetails: {
   username: string;
   password: string;
   email: string;
-}): Promise<LoginInUserResponse> {
+}): Promise<SignInUserResponse> {
   try {
     const user = await prisma.user.create({
       data: {
@@ -26,14 +26,12 @@ export async function SignInUser(userdetails: {
     }
     return { success: true, message: "user created!", user: user };
   } catch (error) {
-    console.error("error while Signin user: ", error);
     return {
       success: false,
       message: "unexpected error occured while creating user",
     };
   }
 }
-
 export async function LoginInUser(userdetails: {
   username: string;
   password: string;
@@ -53,10 +51,68 @@ export async function LoginInUser(userdetails: {
     }
     return { success: true, message: "user found!", user: CurrentUser };
   } catch (error) {
-    console.error("error while Signin user: ", error);
     return {
       success: false,
       message: "unexpected error occured while login user",
     };
   }
 }
+
+
+export async function CheckCreadential(userdetails: {
+  username: string;
+  password: string;
+  email: string;
+}): Promise<CheckCreadentialResponse> {
+  try {
+    const user = await prisma.user.findMany({
+      where: {
+        OR: [{ username: userdetails.username }, { email: userdetails.email }],
+      },
+    });
+
+    if (user.length === 0) {
+      return {
+        success: true,
+        isUserExist: false,
+        isUsernameExisted: false,
+        isEmailExisted: false,
+      };
+    }
+
+    const username = user.some((user) => user.username == userdetails.username);
+    const email = user.some((user) => user.email == userdetails.email);
+
+    return {
+      success: true,
+      isUserExist: true,
+      isUsernameExisted: username,
+      isEmailExisted: email,
+      message: "user found",
+    };
+  } catch (error) {
+    return { success: false, message: "failed during checking creadential" };
+  }
+}
+
+export async function signToken({
+  username,
+  id,
+}: {
+  username: string;
+  id: number;
+}) {
+  try {
+    const secret = process.env.JWT_SECRET;
+
+    if (!secret) {
+      throw new Error("JWT_SECRET is not defined in environment variables");
+    }
+    const token = jwt.sign({ username: username, id: id }, secret);
+    return token;
+  } catch (error) {
+    console.error("error while signing token: ", error);
+    return false;
+  }
+}
+

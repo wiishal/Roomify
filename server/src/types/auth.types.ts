@@ -9,6 +9,6 @@ export interface CheckCreadentialResponse extends BaseResponse {
 export interface LoginInUserResponse extends BaseResponse {
   user?: User;
 }
-interface SignInUserResponse extends BaseResponse {
+export interface SignInUserResponse extends BaseResponse {
   user?: User;
 }

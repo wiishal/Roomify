@@ -10,6 +10,7 @@ import { useAuth } from "./hooks/useAuth";
 import { useEffect } from "react";
 import { WebSocketProvider } from "./context/WebSocketContext";
 import { MessageContextProvider } from "./context/MessageContext";
+import NotificationPage from "./components/NotificationPage";
 
 export default function AppRoutes() {
   const { isLogged, setIsLogged } = useAuth();
@@ -30,16 +31,19 @@ export default function AppRoutes() {
   ) : (
     <MessageContextProvider>
       <WebSocketProvider>
-        <div className="h-screen w-screen flex flex-row-reverse">
-          <Routes>
-            <Route element={<Layout />}>
-              <Route path="/" element={<Home />} />
-              <Route path="/room/:roomid" element={<SidebarLayout />}>
-                <Route index element={<Room />} />
-                <Route path=":channel" element={<ChannelCtx />} />
+        <div className="h-screen w-screen flex items-center justify-center ">
+          <div className="h-[94%] lg:w-[60%] md:w-[100%] flex flex-row-reverse min-h-0">
+            <Routes>
+              <Route element={<Layout />}>
+                <Route path="/" element={<Home />} />
+                <Route path="/notifications" element={<NotificationPage />} />
+                <Route path="/room/:roomid" element={<SidebarLayout />}>
+                  <Route index element={<Room />} />
+                  <Route path=":channelid" element={<ChannelCtx />} />
+                </Route>
               </Route>
-            </Route>
-          </Routes>
+            </Routes>
+          </div>
         </div>
       </WebSocketProvider>
     </MessageContextProvider>

@@ -7,43 +7,56 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum JoinStatus {
+  pending
+  accepted
+  rejected
+}
+
 model User {
-  id          Int           @id @default(autoincrement())
-  profile     String
-  username    String        @unique
-  password    String
-  email       String
-  createdAt   DateTime      @default(now())
-  last_seen   DateTime      @default(now())
-  JoinRequest JoinRequest[]
-  message     Message[]
-  server      Server[]
-  memberof    Server[]      @relation("serverMembers")
+  id        Int      @id @default(autoincrement())
+  profile   String
+  username  String   @unique
+  password  String
+  email     String
+  createdAt DateTime @default(now())
+  last_seen DateTime @default(now())
+
+  // Relations
+  joinRequests JoinRequest[] @relation("JoinRequestUser") // user requesting to join servers
+  adminActions JoinRequest[] @relation("JoinRequestAdmin") // join requests admin handles
+
+  message  Message[]
+  server   Server[] // servers created by user
+  memberof Server[]  @relation("serverMembers") // servers user joined
 }
 
 model Server {
-  id          Int           @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   name        String
-  createdAt   DateTime      @default(now())
+  createdAt   DateTime @default(now())
   upvote      Int
   adminid     Int
   description String
   profile     String
-  channels    Channel[]
-  JoinRequest JoinRequest[]
-  message     Message[]
-  user        User          @relation(fields: [adminid], references: [id])
-  members     User[]        @relation("serverMembers")
+
+  channels     Channel[]
+  joinRequests JoinRequest[]
+  message      Message[]
+
+  user    User   @relation(fields: [adminid], references: [id])
+  members User[] @relation("serverMembers")
 }
 
 model Channel {
-  id        Int       @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   name      String
-  createdAt DateTime  @default(now())
+  createdAt DateTime @default(now())
   serverid  Int
-  category  String    @default("default")
-  server    Server    @relation(fields: [serverid], references: [id])
-  message   Message[]
+  category  String   @default("default")
+
+  server  Server    @relation(fields: [serverid], references: [id])
+  message Message[]
 }
 
 model Message {
@@ -54,17 +67,23 @@ model Message {
   channelId Int
   delivered Boolean  @default(false)
   serverId  Int
-  channel   Channel  @relation(fields: [channelId], references: [id])
-  server    Server   @relation(fields: [serverId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
+
+  channel Channel @relation(fields: [channelId], references: [id])
+  server  Server  @relation(fields: [serverId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
 }
 
 model JoinRequest {
-  id        Int      @id @default(autoincrement())
+  id        Int        @id @default(autoincrement())
   userId    Int
   serverId  Int
-  status    String   @default("pending")
-  createdAt DateTime @default(now())
-  Server    Server   @relation(fields: [serverId], references: [id])
-  User      User     @relation(fields: [userId], references: [id])
+  adminId   Int
+  status    JoinStatus @default(pending)
+  createdAt DateTime   @default(now())
+
+  // Relations
+  user   User   @relation("JoinRequestUser", fields: [userId], references: [id])
+  admin  User   @relation("JoinRequestAdmin", fields: [adminId], references: [id])
+  server Server @relation(fields: [serverId], references: [id])
+  @@unique([userId,serverId])
 }

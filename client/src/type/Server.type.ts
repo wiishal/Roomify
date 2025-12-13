@@ -25,4 +25,25 @@ export interface CreateChannelResponse extends BaseResponse {
 }
 export interface GetServerInfo extends BaseResponse {
   serverInfo?: Server;
+  redirect?:string
+}
+export interface SendJoinRequestResponse extends BaseResponse {}
+
+
+export enum JoinStatus {
+  pending = "pending",
+  accepted = "accepted",
+  rejected = "rejected",
+}
+
+export interface JoinRequest{
+    id: number;
+    createdAt: Date;
+    userId: number;
+    serverId: number;
+    adminId: number;
+    status: JoinStatus;
+}
+export interface GetjoinrequestResponse extends BaseResponse{
+  joinRequest?:JoinRequest[]
 }
