@@ -4,7 +4,6 @@ interface MessageBlockProps {
   message: Message;
   showUsername: boolean;
 }
-
 export const MessageBlock = ({ message, showUsername }: MessageBlockProps) => {
     // Simple Avatar Placeholder
     const Avatar = () => (
@@ -14,17 +13,13 @@ export const MessageBlock = ({ message, showUsername }: MessageBlockProps) => {
     );
 
     return (
-        // Apply vertical padding based on whether it's a new group
         <div className={`flex items-start px-4 ${showUsername ? 'pt-4' : 'pt-0'}`}>
             
-            {/* Avatar Column */}
             <div className={`w-10 flex-shrink-0 ${showUsername ? 'mt-0' : 'mt-0 opacity-0 h-4'}`}>
                 {showUsername && <Avatar />}
             </div>
 
-            {/* Content Column */}
             <div className="flex flex-col flex-grow min-w-0">
-                {/* Username and Time (Only visible on the first message of a group) */}
                 {showUsername && (
                     <div className="flex items-baseline mb-0.5">
                         <span className="font-semibold text-gray-900 mr-2 text-sm">

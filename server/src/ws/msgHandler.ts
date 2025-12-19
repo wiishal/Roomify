@@ -4,6 +4,7 @@ import { WebSocket as WsType } from "ws";
 import { online_users, rooms } from "../utils/serverConfig";
 import { Msg, MsgType } from "../types/message.type";
 import { pub } from "../utils/redis";
+import { AuthUser } from "../types/Responce";
 
 export const msgHandler: Record<MsgType, (ws: WsType, msg: Msg) => void> = {
   auth: handleAuth,
@@ -23,11 +24,13 @@ function handleAuth(ws: WsType, msg: Msg) {
       throw new Error("JWT_SECRET is not defined in environment variables");
     }
     const token = msg.auth_token;
-    const decoded = jwt.verify(token, secret) as jwt.JwtPayload;
-    ws.userId = decoded.id;
-    ws.username = decoded.username
+    const decoded = jwt.verify(token, secret) as AuthUser;
+    ws.user = {
+      userId:decoded.id,
+      username:decoded.username
+    }
     online_users.set(decoded.id, ws);
-    console.log(`${ws.userId} connected`);
+    console.log(`${ws.user.userId} connected`);
 
     ws.send(JSON.stringify({ type: "auth_success", msg: "user identfied" }));
   } catch (error) {
@@ -36,7 +39,7 @@ function handleAuth(ws: WsType, msg: Msg) {
 }
 
 async function handleSendMsgToChannel(ws: WsType, msg: Msg) {
-  const current_user = ws.userId;
+  const current_user = ws.user?.userId ;
   if (!current_user) {
     ws.send(JSON.stringify({ type: "auth_falied", msg: "user not validate" }));
     return;
@@ -60,7 +63,7 @@ async function handleSendMsgToChannel(ws: WsType, msg: Msg) {
     channelId: msg.send_to_channel_id,
     userId: current_user,
     content: msg.message_content || "",
-    senderUsername:ws.username
+    senderUsername:ws.user?.username
   };
   
   // const saveMsg = await saveMessage(message);

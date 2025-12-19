@@ -5,12 +5,12 @@ import { useNavigate } from "react-router-dom";
 
 export function useServerInfo(serverid: string | undefined) {
   const [serverInfo, setServerInfo] = useState<null | Server>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [isloading, setIsloading] = useState<boolean>(true);
   let navigate = useNavigate();
 
   const fetchSeverInfo = useCallback(async (serverid: string) => {
     {
-      setLoading(true);
+      setIsloading(true);
       setServerInfo(null);
       const res = await getServerInfo(serverid);
       if (!res.success) {
@@ -24,7 +24,7 @@ export function useServerInfo(serverid: string | undefined) {
         return;
       }
       setServerInfo(res.serverInfo);
-      setLoading(false);
+      setIsloading(false);
     }
   }, []);
   
@@ -36,5 +36,5 @@ export function useServerInfo(serverid: string | undefined) {
     fetchSeverInfo(serverid);
   }, [serverid, fetchSeverInfo]);
 
-  return { serverInfo, loading };
+  return { serverInfo, isloading };
 }

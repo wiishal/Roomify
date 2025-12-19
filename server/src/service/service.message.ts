@@ -23,7 +23,7 @@ export function broadcastToRoom(message: BroadcastToRoomParams) {
 }
 
 export function cleanupOnClose(ws: WsType) {
-  const user = ws.userId;
+  const user = ws.user?.userId;
   if (!user) return;
   online_users.delete(user);
   console.log(`${user} left the server`);

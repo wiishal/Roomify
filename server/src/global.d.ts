@@ -1,17 +1,18 @@
 import { AuthUser } from "./types/Responce";
- declare global {
+declare global {
   namespace Express {
     interface Request {
-      user?: AuthUser
+      user?: AuthUser;
     }
   }
 }
 
- declare module "ws" {
+declare module "ws" {
   interface WebSocket {
-    userId?: number;
-    username?:string
+    user?:AuthUserWS
   }
 }
 
-export {}
+
+
+export {};
