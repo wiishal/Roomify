@@ -1,35 +1,11 @@
-import { useEffect, useState } from "react";
-import { verifyToken } from "../services/services.user";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
-export function useAuth() {
-  const [isLogged, setIsLogged] = useState<boolean | null>(null);
-  console.log(isLogged);
-
-  
-  useEffect(() => {
-    async function verify() {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setIsLogged(false);
-        return false;
-      }
-      try {
-        const res = await verifyToken(token);
-        if (!res.success) {
-          setIsLogged(false);
-          return;
-        }
-        setIsLogged(true);
-        return;
-      } catch (error) {
-        alert("error while verify");
-        console.log("verify error : ", error);
-        setIsLogged(false);
-      }
-    }
-
-    verify();
-  }, []);
-
-  return { isLogged, setIsLogged };
-}
+export const useAuth = () => {
+  const ctx = useContext(AuthContext);
+  if (!ctx) {
+    console.error("can't get useAuthcontext : Auth ctx provider!1");
+    throw new Error("use Auth must be inside AuthProvider")
+  }
+  return ctx;
+};
