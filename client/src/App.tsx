@@ -6,14 +6,15 @@ import Layout from "./components/layout/Layout";
 import SidebarLayout from "./components/layout/SidebarLayout";
 import ChannelCtx from "./components/ChannelCtx";
 import Landingpage from "./components/Landingpage";
-import { useAuth } from "./hooks/useAuth";
 import { useEffect } from "react";
 import { WebSocketProvider } from "./context/WebSocketContext";
 import { MessageContextProvider } from "./context/MessageContext";
 import NotificationPage from "./components/NotificationPage";
+import OAuthSuccess from "./components/auth/OAuthSuccess";
+import { useAuth } from "./hooks/useAuth";
 
 export default function AppRoutes() {
-  const { isLogged, setIsLogged } = useAuth();
+  const {isLogged} = useAuth()
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,7 +27,8 @@ export default function AppRoutes() {
 
   return !isLogged ? (
     <Routes>
-      <Route path="*" element={<Landingpage setIsLogged={setIsLogged} />} />
+      <Route path="/oauth-success" element={<OAuthSuccess/>}></Route>
+      <Route path="*" element={<Landingpage />} />
     </Routes>
   ) : (
     <MessageContextProvider>
@@ -49,3 +51,4 @@ export default function AppRoutes() {
     </MessageContextProvider>
   );
 }
+

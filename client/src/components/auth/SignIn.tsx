@@ -1,7 +1,8 @@
-import { Dispatch, JSX, SetStateAction, useState } from "react";
+import { JSX, useState } from "react";
 import { useNavigate } from "react-router-dom";
 // import Button from "../ui/Button"; // Removed custom Button import
 import { signIn } from "../../services/services.user";
+import { useAuth } from "../../hooks/useAuth";
 
 // Helper component for loading spinner
 const Spinner = () => (
@@ -9,11 +10,9 @@ const Spinner = () => (
 );
 
 export default function SignIn({
-  setIsLogged,
   onClose,
-  onAlreadyHasAcc, 
+  onAlreadyHasAcc,
 }: {
-  setIsLogged: Dispatch<SetStateAction<boolean | null>>;
   onClose: () => void;
   onAlreadyHasAcc: () => void;
 }): JSX.Element {
@@ -25,7 +24,8 @@ export default function SignIn({
   const [isloading, setIsLoading] = useState(false);
   const [signInError, setSignInError] = useState<string | null>(null);
   const navigate = useNavigate();
-
+  const auth = useAuth();
+  const setLogin = auth.login;
   const handleSignIn = async () => {
     if (!userdetails.username || !userdetails.email || !userdetails.password) {
       setSignInError("All fields are required for registration.");
@@ -39,20 +39,23 @@ export default function SignIn({
       const res = await signIn(userdetails);
 
       if (!res || !res.success) {
-        setSignInError(res?.message || "Registration failed. Please try a different username/email.");
+        setSignInError(
+          res?.message ||
+            "Registration failed. Please try a different username/email."
+        );
         return;
       }
-      
+
       if (!res.token) {
-        setSignInError("Registration succeeded but session token was not received.");
+        setSignInError(
+          "Registration succeeded but session token was not received."
+        );
         return;
       }
-      
-      localStorage.setItem("token", res.token);
-      setIsLogged(true);
-      onClose(); 
+
+      setLogin(res.token);
+      onClose();
       navigate("/");
-      
     } catch (error) {
       console.error("Sign-in error : ", error);
       setSignInError("An unexpected network error occurred. Please try again.");
@@ -60,10 +63,9 @@ export default function SignIn({
       setIsLoading(false);
     }
   };
-  
+
   return (
     <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-2xl border border-gray-100 mx-auto transition-all duration-300">
-      
       <h2 className="text-3xl font-extrabold text-gray-900 mb-2 text-center">
         Create Your Account
       </h2>
@@ -72,15 +74,20 @@ export default function SignIn({
       </p>
 
       {signInError && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6 text-sm" role="alert">
+        <div
+          className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6 text-sm"
+          role="alert"
+        >
           {signInError}
         </div>
       )}
 
       <div className="space-y-4">
-        
         <div className="flex flex-col">
-          <label htmlFor="username" className="text-sm font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="username"
+            className="text-sm font-medium text-gray-700 mb-1"
+          >
             Username
           </label>
           <input
@@ -96,7 +103,10 @@ export default function SignIn({
         </div>
 
         <div className="flex flex-col">
-          <label htmlFor="email" className="text-sm font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="email"
+            className="text-sm font-medium text-gray-700 mb-1"
+          >
             Email
           </label>
           <input
@@ -113,7 +123,10 @@ export default function SignIn({
         </div>
 
         <div className="flex flex-col">
-          <label htmlFor="password" className="text-sm font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="password"
+            className="text-sm font-medium text-gray-700 mb-1"
+          >
             Password
           </label>
           <input
@@ -126,7 +139,7 @@ export default function SignIn({
               setuserdetails((prev) => ({ ...prev, password: e.target.value }));
             }}
             onKeyDown={(e) => {
-              if (e.key === 'Enter') handleSignIn();
+              if (e.key === "Enter") handleSignIn();
             }}
           />
         </div>
@@ -140,7 +153,7 @@ export default function SignIn({
         >
           {isloading ? <Spinner /> : "Sign Up"}
         </button>
-        
+
         <div className="flex justify-between items-center pt-2">
           <button
             onClick={onClose}

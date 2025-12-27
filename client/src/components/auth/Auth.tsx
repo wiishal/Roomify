@@ -1,12 +1,10 @@
-import { Dispatch, JSX, SetStateAction, useState } from "react";
+import {  JSX, useState } from "react";
 import Login from "./Login";
 import SignIn from "./SignIn";
 
 export default function Auth({
-  setIsLogged,
   onClose,
 }: {
-  setIsLogged: Dispatch<SetStateAction<boolean | null>>;
   onClose: () => void;
 }): JSX.Element {
   const [alreadyHasAcc, SetAlreadyHasAcc] = useState(true);
@@ -15,7 +13,6 @@ export default function Auth({
     return (
       <Login
         onClose={onClose}
-        setIsLogged={setIsLogged}
         onAlreadyHasAcc={() => SetAlreadyHasAcc(false)}
       />
     );
@@ -23,7 +20,6 @@ export default function Auth({
   return (
     <SignIn
       onClose={onClose}
-      setIsLogged={setIsLogged}
       onAlreadyHasAcc={() => SetAlreadyHasAcc(true)}
     />
   );
