@@ -1,4 +1,3 @@
-// AppRoutes.tsx
 import { Routes, Route, useNavigate } from "react-router-dom";
 import Home from "./components/Home";
 import Room from "./components/Room";
@@ -12,9 +11,10 @@ import { MessageContextProvider } from "./context/MessageContext";
 import NotificationPage from "./components/NotificationPage";
 import OAuthSuccess from "./components/auth/OAuthSuccess";
 import { useAuth } from "./hooks/useAuth";
+import Search from "./components/Search";
 
 export default function AppRoutes() {
-  const {isLogged} = useAuth()
+  const { isLogged } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,7 +27,7 @@ export default function AppRoutes() {
 
   return !isLogged ? (
     <Routes>
-      <Route path="/oauth-success" element={<OAuthSuccess/>}></Route>
+      <Route path="/oauth-success" element={<OAuthSuccess />}></Route>
       <Route path="*" element={<Landingpage />} />
     </Routes>
   ) : (
@@ -38,6 +38,7 @@ export default function AppRoutes() {
             <Routes>
               <Route element={<Layout />}>
                 <Route path="/" element={<Home />} />
+                <Route path="/search" element={<Search />} />
                 <Route path="/notifications" element={<NotificationPage />} />
                 <Route path="/room/:roomid" element={<SidebarLayout />}>
                   <Route index element={<Room />} />
@@ -51,4 +52,3 @@ export default function AppRoutes() {
     </MessageContextProvider>
   );
 }
-

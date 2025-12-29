@@ -14,7 +14,6 @@ export async function login(userdetails: {
     });
 
     return {
-      ...res.data,
       success: true,
     };
   } catch (error) {
@@ -46,7 +45,6 @@ export async function signIn(userdetails: {
     });
 
     return {
-      ...res.data,
       success: true,
     };
   } catch (error) {
@@ -67,18 +65,11 @@ export async function signIn(userdetails: {
   }
 }
 
-export async function verifyToken(token: string): Promise<BaseResponse> {
-  if (!token) {
-    console.error("Token Not present!!");
-
-    return {
-      success: false,
-      message: "Token Not present",
-      status: 401,
-    };
-  }
+export async function verifyToken( ): Promise<BaseResponse> {
+  
   try {
-    await axios.post(`${url}/api/v1/auth/verify`, { token });
+    const res = await axiosInstance.get(`/api/v1/auth/verify`);
+    console.log(res)
     return {
       success: true,
       message: "verified",

@@ -7,7 +7,6 @@ export function useChannel(serverid: number | string | undefined) {
 
   const loadChannels = useCallback(
     async (serverid: number | string) => {
-      console.log("refetch triggere on channels", serverid);
       const res = await fetchChannels(serverid);
       if (!res.success) {
         alert(res.message || "failed to get server");

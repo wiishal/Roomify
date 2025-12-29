@@ -3,6 +3,7 @@ import { useState } from "react";
 import useServer from "../../hooks/useServer";
 import CreateServer from "../CreateServer";
 import { Server } from "../../type/type";
+import searchPng from "../../assets/search.png"; 
 
 export default function Serverbar() {
   const { server } = useServer();
@@ -32,6 +33,15 @@ export default function Serverbar() {
       <div className="w-8 h-px bg-gray-200"></div>
 
       <div className="flex-1 overflow-y-auto w-full px-2 space-y-2">
+        <Link to={`/search`}>
+          <div
+            className={`flex justify-center items-center w-12 h-12 mx-auto rounded-full bg-gray-100 border-2 border-transparent 
+                        text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-200 hover:rounded-xl transition-all duration-300`}
+            title="Direct Messages"
+          >
+            <img src={searchPng} alt="search"  className="w-5 h-5"  />
+          </div>
+        </Link>
         <Link to={`/`}>
           <div
             className={`flex justify-center items-center w-12 h-12 mx-auto rounded-full bg-gray-100 border-2 border-transparent 

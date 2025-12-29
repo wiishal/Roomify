@@ -1,11 +1,7 @@
-import { Dispatch, JSX, SetStateAction, useState } from "react";
+import { JSX, useState } from "react";
 import Auth from "./auth/Auth";
 
-export default function Landingpage({
-  setIsLogged,
-}: {
-  setIsLogged: Dispatch<SetStateAction<boolean | null>>;
-}): JSX.Element {
+export default function Landingpage(): JSX.Element {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   
   return (
@@ -62,7 +58,6 @@ export default function Landingpage({
         <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center p-4">
           <Auth 
             onClose={() => setIsLoginOpen(false)} 
-            setIsLogged={setIsLogged} 
           />
         </div>
       )}

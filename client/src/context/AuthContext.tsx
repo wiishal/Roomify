@@ -3,8 +3,7 @@ import { verifyToken } from "../services/services.user";
 
 export interface AuthContextTypes {
   isLogged: boolean;
-  login: (token: string) => void;
-  logout: () => void;
+  setIsLogged: React.Dispatch<React.SetStateAction<boolean>>
 }
 export const AuthContext = createContext<AuthContextTypes | null>(null);
 
@@ -12,28 +11,15 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [isLogged, setIsLogged] = useState<boolean>(false);
-
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setIsLogged(false);
-      return;
-    }
-    verifyToken(token)
+    verifyToken()
       .then((res) => setIsLogged(res.success))
       .catch(() => setIsLogged(false));
   }, [isLogged]);
 
-  const login = (token: string) => {
-    localStorage.setItem("token", token);
-    setIsLogged(true);
-  };
-  const logout = () => {
-    localStorage.removeItem("token");
-    setIsLogged(false);
-  };
+  
   return (
-    <AuthContext.Provider value={{ isLogged, login, logout }}>
+    <AuthContext.Provider value={{ isLogged, setIsLogged }}>
       {children}
     </AuthContext.Provider>
   );

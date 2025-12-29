@@ -4,19 +4,20 @@ import { useState } from "react";
 import { useWebsocket } from "../hooks/useSocket";
 import { Message, Msg, MsgType } from "../type/type";
 import { MessageBlock } from "./MessageBlock";
+import { useUser } from "../hooks/useUser";
 
 
 export default function ChannelCtx() {
   const socket = useWebsocket();
   const { messages } = useMessages();
   const params = useParams();
-
+  const  token = useUser()
   const serverId = Number(params.roomid);
   const channelId = Number(params.channelid);
 
   const [textMessage, setTextMessage] = useState("");
 
-  if (isNaN(serverId) || isNaN(channelId) || !serverId || !channelId) {
+  if (isNaN(serverId) || isNaN(channelId) || !serverId || !channelId || !token) {
     return (
       <div className="flex items-center justify-center h-full text-xl text-red-500 bg-gray-100">
         <p>Invalid Room or Channel ID in URL.</p>
@@ -69,13 +70,13 @@ export default function ChannelCtx() {
           </div>
         ) : (
           channelMsgs.map((m, idx) => {
-            // Determine if the username should be shown
             const showUsername =
               idx === 0 ||
               m.senderUsername !== channelMsgs[idx - 1].senderUsername;
 
             return (
               <MessageBlock 
+                user={token.username}
                 key={idx} 
                 message={m} 
                 showUsername={showUsername} 

@@ -5,9 +5,9 @@ import React, {
   useState,
   useRef,
 } from "react";
-import { useAuth } from "../hooks/useAuth";
 import { useMessages } from "../hooks/useMessage";
 import { MsgType } from "../type/type";
+import { useAuth } from "../hooks/useAuth";
 
 export const WebSocketContext = createContext<WebSocket | null>(null);
 
@@ -60,7 +60,7 @@ export const WebSocketProvider: React.FC<{ children: ReactNode }> = ({
       console.log("reconnecting...");
       if (!isLogged) return;
 
-      if (retriesCountRef.current >= MAXTRIES ) {
+      if (retriesCountRef.current >= MAXTRIES) {
         console.log(`max tries reached!`);
         return;
       }
@@ -69,7 +69,7 @@ export const WebSocketProvider: React.FC<{ children: ReactNode }> = ({
       retryDelayRef.current = window.setTimeout(connect, delay);
     };
   };
-  
+
   useEffect(() => {
     connect();
     return () => {

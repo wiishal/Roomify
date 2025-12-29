@@ -1,15 +1,12 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Server } from "../type/type";
 import { getServers } from "../services/services.server";
 
 export default function useServer() {
   const [server, setServer] = useState<Server[] | []>([]);
   const [isLoading, setLoading] = useState(true);
-  useEffect(() => {
-    fetchServers();
-  }, []);
 
-  async function fetchServers() {
+  const fetchServers = useCallback(async () => {
     try {
       const res = await getServers();
       if (!res.success) {
@@ -22,13 +19,16 @@ export default function useServer() {
         return;
       }
       setServer(res.servers);
-    } catch  {
+    } catch {
       setLoading(false);
       alert("expected error accured");
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
+  useEffect(() => {
+    fetchServers();
+  }, [fetchServers]);
 
   return { server, isLoading, refetch: fetchServers };
 }

@@ -21,8 +21,7 @@ export default function Login({
   const [isloading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const auth = useAuth();
-  const setLogin = auth.login;
+  const { setIsLogged } = useAuth();
   const googleLogin = () => {
     window.location.href = "http://localhost:4000/api/v1/auth/google";
   };
@@ -46,12 +45,8 @@ export default function Login({
         return;
       }
 
-      if (!res.token) {
-        setLoginError("Login succeeded but session token was not received.");
-        return;
-      }
 
-      setLogin(res.token);
+      setIsLogged(res.success)
       onClose();
       navigate("/");
     } catch (error) {

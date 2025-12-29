@@ -24,8 +24,7 @@ export default function SignIn({
   const [isloading, setIsLoading] = useState(false);
   const [signInError, setSignInError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const auth = useAuth();
-  const setLogin = auth.login;
+  const {setIsLogged} = useAuth();
   const handleSignIn = async () => {
     if (!userdetails.username || !userdetails.email || !userdetails.password) {
       setSignInError("All fields are required for registration.");
@@ -46,14 +45,7 @@ export default function SignIn({
         return;
       }
 
-      if (!res.token) {
-        setSignInError(
-          "Registration succeeded but session token was not received."
-        );
-        return;
-      }
-
-      setLogin(res.token);
+      setIsLogged(res.success)
       onClose();
       navigate("/");
     } catch (error) {

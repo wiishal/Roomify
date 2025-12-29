@@ -29,7 +29,6 @@ export const MessageContextProvider: React.FC<{
     }));
   };
 
-  // console.log(Messages[123]) -> pass serverid to get channel record(object)
 
   return (
     <MessageContext.Provider value={{ messages, addMessage }}>
