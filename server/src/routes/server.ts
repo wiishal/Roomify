@@ -15,6 +15,7 @@ import {
 } from "../service/service.server";
 import { JoinStatus } from "../types/server.types";
 import { checkAdmin, checkMember } from "../service/service.server";
+import { rateLimiter } from "../middleware/rateLimiter";
 
 const ServerRouter = express.Router();
 
@@ -22,7 +23,6 @@ const ServerRouter = express.Router();
 ServerRouter.use(tokenVerification);
 
 //get all servers
-
 ServerRouter.post("/joinRequest", async (req, res) => {
   const user = req.user;
   const { joinrequestInfo } = req.body;
@@ -48,25 +48,29 @@ ServerRouter.post("/joinRequest", async (req, res) => {
   res.status(200).json({ message: "req stored successfully" });
 });
 
-ServerRouter.get("/allservers", async (req, res) => {
-  const user = req.user;
+ServerRouter.get(
+  "/allservers",
+  rateLimiter({ maxReq: 10, expireWindow: 1000 }),
+  async (req, res) => {
+    const user = req.user;
 
-  if (!user) {
-    res.status(500).json({ message: "failed during auth decode" });
-    console.log("error : user decode missing ");
-    return;
+    if (!user) {
+      res.status(500).json({ message: "failed during auth decode" });
+      console.log("error : user decode missing ");
+      return;
+    }
+    const response = await getAllServers(user.id);
+    if (!response.success) {
+      res.status(404).json({ message: response.error });
+      return;
+    }
+    // console.log(response.servers,"all servers")
+    res.json({
+      servers: response.servers,
+      message: "servers fetched successfully",
+    });
   }
-  const response = await getAllServers(user.id);
-  if (!response.success) {
-    res.status(404).json({ message: response.error });
-    return;
-  }
-  // console.log(response.servers,"all servers")
-  res.json({
-    servers: response.servers,
-    message: "servers fetched successfully",
-  });
-});
+);
 
 ServerRouter.get("/", async (req, res) => {
   const user = req.user;
