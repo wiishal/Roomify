@@ -1,9 +1,16 @@
 import { prisma } from "../lib/prisma";
 import { WebSocket as WsType } from "ws";
+import { CookieOptions } from "express";
 
 export const defaultChannels = ["rules", "join"];
 export const rooms = new Map<number, Set<number>>(); // serverId -> userIds
 export const online_users = new Map<number, WsType>();
+export const access_tokenCookieOptions: CookieOptions = {
+  httpOnly: true,
+  secure: false, // for development(true in prod)
+  sameSite: "lax",
+  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+};
 
 export async function loadRooms() {
   const servers = await prisma.server.findMany({

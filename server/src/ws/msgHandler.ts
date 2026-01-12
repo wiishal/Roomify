@@ -13,7 +13,6 @@ export const msgHandler: Record<MsgType, (ws: WsType, msg: Msg) => void> = {
 };
 
 function handleAuth(ws: WsType, msg: Msg) {
-  console.log('in auth handler')
   if (!msg.auth_token) {
     ws.send(JSON.stringify({ type: "auth_failed", msg: "token not recieved" }));
     return;
@@ -39,7 +38,7 @@ function handleAuth(ws: WsType, msg: Msg) {
 }
 
 async function handleSendMsgToChannel(ws: WsType, msg: Msg) {
-  const current_user = ws.user?.userId ;
+  const current_user = ws.user?.userId;
   if (!current_user) {
     ws.send(JSON.stringify({ type: "auth_falied", msg: "user not validate" }));
     return;

@@ -3,7 +3,7 @@ import { WebSocketServer } from "ws";
 import cors from "cors";
 import "dotenv/config";
 import http from "http";
-
+import cookieParser from "cookie-parser";
 import AuthRouter from "./routes/auth";
 import ServerRouter from "./routes/server";
 
@@ -12,10 +12,19 @@ import { Msg, MsgType } from "./types/message.type";
 import { broadcastToRoom, cleanupOnClose } from "./service/service.message";
 import { msgHandler } from "./ws/msgHandler";
 import { onMessageBroker } from "./utils/redis";
+import passport from "./utils/googleAuthPassort";
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN_URI,
+    credentials: true,
+  })
+);
+app.use(passport.initialize());
+app.use(cookieParser());
+
 app.use("/api/v1/auth", AuthRouter);
 app.use("/api/v1/server", ServerRouter);
 
@@ -31,9 +40,8 @@ const wss = new WebSocketServer({
   path: "/ws",
 });
 
-//needed to add notification table to send msg offline users
 wss.on("connection", (ws, request) => {
-
+  let token = request.headers.cookie?.split("=")[1];
   ws.on("message", (data) => {
     let msg: Msg;
     try {
@@ -51,7 +59,9 @@ wss.on("connection", (ws, request) => {
       console.warn("unknown type msg");
       return;
     }
-
+    if (msg.type == MsgType.auth) {
+      msg = { ...msg, auth_token: token || "" };
+    }
     handler(ws, msg);
   });
 

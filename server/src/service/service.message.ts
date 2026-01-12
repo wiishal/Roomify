@@ -16,6 +16,7 @@ export function broadcastToRoom(message: BroadcastToRoomParams) {
           senderUsername: message.senderUsername,
           channelId: message.channelId,
           content: message.content,
+          timestamp:message.timestamp || new Date().toLocaleString()
         })
       );
     }

@@ -8,12 +8,11 @@ export async function tokenVerification(
   res: Response,
   next: NextFunction
 ) {
-  const token = req.headers["authorization"]?.split(" ")[1];
+  const token = req.cookies.access_token;
   if (!token) {
     res.status(401).json({ message: "unauthorized" });
     return;
   }
-  console.log('call on api')
   try {
     if (!secret) {
       throw new Error("JWT_SECRET is not defined in environment variables");
